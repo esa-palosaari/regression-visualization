@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 class UnitTests {
   
   // Tests for an empty dataset
-  @Test def noneDataPoints () 
+  @Test def noneDataPoints ()  
   {
     val emptyData = new Data()
     assertTrue("An empty dataset's points should return None", emptyData.getPoints == None)
@@ -29,19 +29,22 @@ class UnitTests {
   // tests with something inside a dataset
   @Test def someDataName () 
   {
-    val someData = new Data(name = Some("dataset's name"))
+    val someData = new Data()
+    someData.initializeDataset(newName= Some("Dataset's name"))
     assertTrue("A dataset with a name data points should return the same name in a wrapper", someData.getName == Some("dataset's name"))    
   }
   
   @Test def someDataPointsExists () 
   {
-    val someData = new Data(points = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
     assertTrue("A dataset with data some points given should have them", someData.getPoints.isDefined)    
   }
   
   @Test def someDataPoints () 
   {
-    val someData = new Data(points = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
 //    for{
 //      something <- someData.points
 //      array <- something
@@ -58,7 +61,8 @@ class UnitTests {
   
   @Test def someDataVarNamesExist ()
   {
-    val someData = new Data(points = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
     assertTrue("A dataset with some data points should have variable names", someData.getVarNames.isDefined)
   }
  
