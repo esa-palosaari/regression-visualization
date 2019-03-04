@@ -11,7 +11,7 @@ class UnitTests {
   @Test def nonePoints () {
     val emptyData = new Data()
     assertTrue("An empty dataset's points should return None", emptyData.points == None)
-
+ 
   }
 
   @Test def noneName () {
