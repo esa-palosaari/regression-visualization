@@ -6,16 +6,14 @@ class Data()
 {
 
   private var points: Option[Array[Array[Double]]] = None
-  private var name: Option[String] = None
+  var name: Option[String] = None
   private var varNames: Option[ArrayBuffer[String]] = None
   
   def getPoints: Option[Array[Array[Double]]] = points
-  def getName: Option[String] = name
   def getVarNames: Option[ArrayBuffer[String]] = varNames
-  
   /*
-   *  initializeDataset allows to replace all, some or none of the 
-   *  default 
+   *  InitializeDataset allows to replace all, some or none of the 
+   *  default. Needed for checking and creating variable names.
    */
   def initializeDataset (newPoints: Option[Array[Array[Double]]] = None,
                          newName: Option[String] = None,
@@ -35,21 +33,32 @@ class Data()
     
     newVarNames match 
     {
-      case Some(newVarNames) => varNames = Some(newVarNames)
+      case Some(newVarNames) => 
+        {
+          val varNamesLength = varNames.get.length
+          if (points.isDefined && varNamesLength == points.get.length) 
+            varNames = Some(newVarNames)
+          else if (points.isDefined && varNamesLength < points.get.length)
+          {
+            addVariableNames(varNamesLength, points.get.length, false)
+          }
+        }
       case None => 
         {
-          if(points.isDefined) 
-          {
-            var i = 1
-            val columnNumber = points.get.length
-            varNames = Some(ArrayBuffer.fill(columnNumber)(""))
-            while (i <= columnNumber)
-            {
-              varNames.get(i-1) = "Variable_" + i.toString()
-              i = i + 1
-            }
-          }
+          if(points.isDefined) addVariableNames(1, points.get.length, true)
         }  
+    }
+    
+    def addVariableNames(from: Int, until: Int, createNew: Boolean) = 
+    {
+      var i = from
+      if (createNew) varNames = Some(ArrayBuffer.fill(until)(""))
+      else varNames = Some(varNames.get.++=(ArrayBuffer.fill(until-from)("")))
+      while (i <= until)
+      {
+        varNames.get(i-1) = "Variable_" + i.toString()
+        i += 1
+      }
     }
   }
   

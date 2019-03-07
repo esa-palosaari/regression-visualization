@@ -3,7 +3,6 @@ package regressionViz
 import org.junit.Test
 import org.junit.Assert._
 import org.junit.runner.RunWith
-import org.scalatest._
 
 
 class UnitTests {
@@ -18,7 +17,7 @@ class UnitTests {
   @Test def noneDataName () 
   {
     val emptyData = new Data()
-    assertTrue("A dataset without a name should return None", emptyData.getName == None)    
+    assertTrue("A dataset without a name should return None", emptyData.name == None)    
   }
     
   @Test def noneDataVarNames () 
@@ -34,8 +33,8 @@ class UnitTests {
     val someData = new Data()
     someData.initializeDataset(newName= Some("Dataset's name"))
     assertTrue("A dataset with a name data points should return the same name in " +
-        "a wrapper. Instead got: " + someData.getName.toString(), 
-        someData.getName == Some("Dataset's name"))    
+        "a wrapper. Instead got: " + someData.name.toString(), 
+        someData.name == Some("Dataset's name"))    
   }
   
   @Test def someDataPointsExists () 
@@ -72,15 +71,40 @@ class UnitTests {
         someData.getVarNames.isDefined)
   }
  
-  
+  // get error when initializing a model without data
   @Test(expected=classOf[ IllegalArgumentException])
   def withoutDataAnyModelReturnsError()
   {
    new OLSModel(new Data())
    }
   
-  // create a dataset with unequal number of values, handle missing in the model preprocessing
+  @Test def getNoneWhenModelNameNotDefined ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val olsModel = new OLSModel(someData)
+    assertTrue("The model should have None as name when none is given. " +
+               "Instead got: " + olsModel.name.toString(),
+               olsModel.name == None)
+  }
   
-  // create another dataset with unequal number of values, handle missing in the model preprocessing
+  @Test def getTheRightModelNameWhenItIsGiven ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val olsModel = new OLSModel(someData)
+    olsModel.name = Some("malli")
+    assertTrue("The model should have None as name when none is given. " +
+               "Instead got: " + olsModel.name.toString(),
+               olsModel.name == Some())    
+  }
   
+  /* create a dataset with unequal number of values, 
+   * handle missing in the model preprocessing
+   */
+  // create data with ((1, 1), (1))
+  
+  
+  // use MaxValue for missing data
+    
 }
