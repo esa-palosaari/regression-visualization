@@ -28,7 +28,7 @@ class UnitTests {
   }
  
   // tests with something inside a dataset
-  @Test def someDataName () 
+  @Test def someDataNameShouldReturnTheSame () 
   {
     val someData = new Data()
     someData.initializeDataset(newName= Some("Dataset's name"))
@@ -37,7 +37,7 @@ class UnitTests {
         someData.name == Some("Dataset's name"))    
   }
   
-  @Test def someDataPointsExists () 
+  @Test def someDataPointsShouldExist () 
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
@@ -45,7 +45,7 @@ class UnitTests {
         someData.getPoints.isDefined)    
   }
   
-  @Test def someDataPoints () 
+  @Test def someDataPointsShouldBeAsGiven () 
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
@@ -63,7 +63,7 @@ class UnitTests {
         someData.getPoints.get(1)(2) == 2) )    
   }  
   
-  @Test def someDataVarNamesExist ()
+  @Test def someDataVarNamesShouldExist ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
@@ -78,7 +78,7 @@ class UnitTests {
    new OLSModel(new Data())
    }
   
-  @Test def getNoneWhenModelNameNotDefined ()
+  @Test def shouldGetNoneWhenModelNameNotDefined ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
@@ -88,7 +88,7 @@ class UnitTests {
                olsModel.name == None)
   }
   
-  @Test def getTheRightModelNameWhenItIsGiven ()
+  @Test def shouldGetTheRightModelNameWhenItIsGiven ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
