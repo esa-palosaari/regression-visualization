@@ -91,7 +91,7 @@ class UnitTests {
     olsModel.name = Some("malli")
     assertTrue("The model should have None as name when none is given. " +
                "Instead got: " + olsModel.name.toString(),
-               olsModel.name == Some())    
+               olsModel.name == Some("malli"))    
   }
   
   /* create a dataset with unequal number of values, 
@@ -105,9 +105,21 @@ class UnitTests {
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1))))
   }
   
+  @Test def shouldGetNoneEquationAndResidualsWhenNotFitted ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val olsModel = new OLSModel(someData)
+    assertTrue("The equation should be None when model is not fitted. " +
+        "Instead, got: " + olsModel.getEquation.toString(),
+        olsModel.getEquation == None)
+    assertTrue("The residuals should be None when model is not fitted. " +
+        "Instead, got: " + olsModel.getResiduals.toString(),
+        olsModel.getResiduals == None)        
+  }
+  
   // use MaxValue for missing data
   // create data with ((1, 1), (1, MaxValue))
-  
     
   
 }
