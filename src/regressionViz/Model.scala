@@ -6,13 +6,11 @@ abstract class Model (data: Data)
       , "The data is empty. Model creation failed.")
   
   var name: Option[String] = None
-  private var equation: Option[Array[Double]] = None
-  private var residuals: Option[Array[Double]] = None
   
-  def getEquation = equation
-  def getResiduals = residuals
+  def getEquation: Option[Array[Double]]
+  def getResiduals: Option[Array[Double]]
   
-  def fitData(data: Data): Unit
+  def fitData: Unit
   
   
 }

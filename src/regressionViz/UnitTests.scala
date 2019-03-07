@@ -99,25 +99,45 @@ class UnitTests {
    */
  // get error when initializing a model without unequal number of data
   @Test(expected=classOf[ IllegalArgumentException])
-  def unequalNumberOfDatapointsShouldProduceError ()
+  def unequal_Number_Of_Datapoints_Should_Produce_Error ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1))))
   }
   
-  @Test def shouldGetNoneEquationAndResidualsWhenNotFitted ()
+  @Test def should_Get_None_From_Equation_And_Residuals_When_Not_Fitted ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
     val olsModel = new OLSModel(someData)
-    assertTrue("The equation should be None when model is not fitted. " +
+    assertTrue(
+        "The equation should be None when model is not fitted. " +
         "Instead, got: " + olsModel.getEquation.toString(),
         olsModel.getEquation == None)
-    assertTrue("The residuals should be None when model is not fitted. " +
+    assertTrue(
+        "The residuals should be None when model is not fitted. " +
         "Instead, got: " + olsModel.getResiduals.toString(),
-        olsModel.getResiduals == None)        
+        olsModel.getResiduals == None
+        )        
   }
   
+  @Test def equation_And_Residuals_Should_Exist_When_An_OLS_Model_Fitted ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    assertTrue(
+        "The regression equation should exist after OLS model is fitted. " +
+        "Instead equation is: " + olsModel.getEquation.toString,
+        olsModel.getEquation.isDefined
+        )
+    assertTrue(
+        "The regression residuals should exist after OLS model is fitted.",
+        olsModel.getResiduals.isDefined
+        )    
+        
+  }
   // use MaxValue for missing data
   // create data with ((1, 1), (1, MaxValue))
     
