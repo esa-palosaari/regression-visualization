@@ -3,6 +3,7 @@ package regressionViz
 import org.junit.Test
 import org.junit.Assert._
 import org.junit.runner.RunWith
+import org.scalatest._
 
 
 class UnitTests {
@@ -23,7 +24,8 @@ class UnitTests {
   @Test def noneDataVarNames () 
   {
     val emptyData = new Data()
-    assertTrue("A dataset without variable names should return None", emptyData.getVarNames == None)    
+    assertTrue("A dataset without variable names should return None", 
+        emptyData.getVarNames == None)    
   }
  
   // tests with something inside a dataset
@@ -31,7 +33,8 @@ class UnitTests {
   {
     val someData = new Data()
     someData.initializeDataset(newName= Some("Dataset's name"))
-    assertTrue("A dataset with a name data points should return the same name in a wrapper. Instead got: " + someData.getName.toString(), 
+    assertTrue("A dataset with a name data points should return the same name in " +
+        "a wrapper. Instead got: " + someData.getName.toString(), 
         someData.getName == Some("Dataset's name"))    
   }
   
@@ -39,7 +42,8 @@ class UnitTests {
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
-    assertTrue("A dataset with data some points given should have them", someData.getPoints.isDefined)    
+    assertTrue("A dataset with data some points given should have them", 
+        someData.getPoints.isDefined)    
   }
   
   @Test def someDataPoints () 
@@ -64,13 +68,19 @@ class UnitTests {
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
-    assertTrue("A dataset with some data points should have variable names", someData.getVarNames.isDefined)
+    assertTrue("A dataset with some data points should have variable names", 
+        someData.getVarNames.isDefined)
   }
  
   
-  // create a dataset with unequal number of values  
+  @Test(expected=classOf[ IllegalArgumentException])
+  def withoutDataAnyModelReturnsError()
+  {
+   new OLSModel(new Data())
+   }
   
-  // create another dataset with unequal number of values
+  // create a dataset with unequal number of values, handle missing in the model preprocessing
   
-  // create 
+  // create another dataset with unequal number of values, handle missing in the model preprocessing
+  
 }
