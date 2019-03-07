@@ -31,7 +31,8 @@ class UnitTests {
   {
     val someData = new Data()
     someData.initializeDataset(newName= Some("Dataset's name"))
-    assertTrue("A dataset with a name data points should return the same name in a wrapper", someData.getName == Some("dataset's name"))    
+    assertTrue("A dataset with a name data points should return the same name in a wrapper. Instead got: " + someData.getName.toString(), 
+        someData.getName == Some("Dataset's name"))    
   }
   
   @Test def someDataPointsExists () 
