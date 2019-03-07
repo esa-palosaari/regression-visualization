@@ -21,7 +21,12 @@ class Data()
   {
     newPoints match 
     {
-      case Some(datapoints) => points = newPoints
+      case Some(datapoints) => 
+        {
+          if(!datapoints.forall(_.length == datapoints(0).length)) 
+            throw new IllegalArgumentException("Unequal number of data in columns.")
+          points = newPoints
+        }
       case None => 
     }
     
@@ -49,6 +54,7 @@ class Data()
         }  
     }
     
+    // if there are no variable names, add them here
     def addVariableNames(from: Int, until: Int, createNew: Boolean) = 
     {
       var i = from

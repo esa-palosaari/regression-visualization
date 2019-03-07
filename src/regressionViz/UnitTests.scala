@@ -49,11 +49,6 @@ class UnitTests {
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
-//    for{
-//      something <- someData.points
-//      array <- something
-//      point <- array
-//    } println(point)
     assertTrue("A dataset with some data points should return the points", (
         someData.getPoints.get(0)(0) == 1.23 &&
         someData.getPoints.get(0)(1) == 3.1343 &&
@@ -102,9 +97,17 @@ class UnitTests {
   /* create a dataset with unequal number of values, 
    * handle missing in the model preprocessing
    */
-  // create data with ((1, 1), (1))
-  
+ // get error when initializing a model without unequal number of data
+  @Test(expected=classOf[ IllegalArgumentException])
+  def unequalNumberOfDatapointsShouldProduceError ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1))))
+  }
   
   // use MaxValue for missing data
+  // create data with ((1, 1), (1, MaxValue))
+  
     
+  
 }
