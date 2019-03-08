@@ -105,6 +105,10 @@ class UnitTests {
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1))))
   }
   
+  /*
+   * Tests for the equation and residuals of the OLS model
+   */
+  
   @Test def should_Get_None_From_Equation_And_Residuals_When_Not_Fitted ()
   {
     val someData = new Data()
@@ -121,7 +125,7 @@ class UnitTests {
         )        
   }
   
-  @Test def equation_And_Residuals_Should_Exist_When_An_OLS_Model_Fitted ()
+  @Test def equation_and_residuals_should_exist_when_an_OLS_Model_fitted ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343, 2), Array(0, 1, 2))))
@@ -138,8 +142,45 @@ class UnitTests {
         )    
         
   }
+  
   // use MaxValue for missing data
   // create data with ((1, 1), (1, MaxValue))
+  // OLSModel should take the row out when fitting a model
+  @Test def OLSModel_should_have_listwise_deletion_and_require_enough_data ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.MaxValue))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    assertTrue(
+        "The OLS model should not be fitted when there are not enough rows. " +
+        "Instead equation is: " + olsModel.getEquation.toString,
+        !olsModel.getEquation.isDefined
+        )
+  }
+  
+  @Test def OLSModel_should_not_have_fittedData_before_fitting ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.MaxValue))))
+    val olsModel = new OLSModel(someData)
+    assertTrue(
+        "There is fittedData before fitting: " + olsModel.getFittedData.toString,
+        olsModel.getFittedData.isEmpty)
+  }
+  
+  @Test def OLSModel_should_have_listwise_deletion ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.MaxValue))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    assertTrue(
+        "The OLS model should correctly delete rows with missing data. " +
+        "Instead fittedData is: " + olsModel.getFittedData.toString,
+        olsModel.getFittedData.get.getPoints == Some(Array(Array(1.23), Array(0)))
+        )
+  }
     
   
 }

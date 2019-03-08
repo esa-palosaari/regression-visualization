@@ -12,5 +12,4 @@ abstract class Model (data: Data)
   
   def fitData: Unit
   
-  
 }
