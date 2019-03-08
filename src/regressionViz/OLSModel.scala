@@ -3,7 +3,6 @@ package regressionViz
 class OLSModel (data: Data) extends Model (data)
 {
 
-
   def fitData: Unit = 
   {
     // listwise deletion for missing values

@@ -146,10 +146,10 @@ class UnitTests {
   // use MaxValue for missing data
   // create data with ((1, 1), (1, MaxValue))
   // OLSModel should take the row out when fitting a model
-  @Test def OLSModel_should_have_listwise_deletion_and_require_enough_data ()
+  @Test def OLSModel_should_require_enough_data ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.MaxValue))))
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.NaN))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     assertTrue(
@@ -162,7 +162,7 @@ class UnitTests {
   @Test def OLSModel_should_not_have_fittedData_before_fitting ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.MaxValue))))
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.NaN))))
     val olsModel = new OLSModel(someData)
     assertTrue(
         "There is fittedData before fitting: " + olsModel.getFittedData.toString,
@@ -172,13 +172,14 @@ class UnitTests {
   @Test def OLSModel_should_have_listwise_deletion ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.MaxValue))))
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.NaN))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     assertTrue(
         "The OLS model should correctly delete rows with missing data. " +
         "Instead fittedData is: " + olsModel.getFittedData.toString,
-        olsModel.getFittedData.get.getPoints == Some(Array(Array(1.23), Array(0)))
+        olsModel.getFittedData.get.getPoints.get(0)(0) == 1.23 && 
+        olsModel.getFittedData.get.getPoints.get(1)(0) == 0
         )
   }
     

@@ -11,6 +11,7 @@ class Data()
   
   def getPoints: Option[Array[Array[Double]]] = points
   def getVarNames: Option[ArrayBuffer[String]] = varNames
+  
   /*
    *  InitializeDataset allows to replace all, some or none of the 
    *  default. Needed for checking and creating variable names.
@@ -40,7 +41,7 @@ class Data()
     {
       case Some(newVarNames) => 
         {
-          val varNamesLength = varNames.get.length
+          val varNamesLength = newVarNames.length
           if (points.isDefined && varNamesLength == points.get.length) 
             varNames = Some(newVarNames)
           else if (points.isDefined && varNamesLength < points.get.length)
