@@ -1,0 +1,50 @@
+*** Viikot 9-10 ***
+*Muutaman rivin kuvauksen mitä luokkia on lisätty tai päivitetty ja mitä 
+toimintoja niissä on saatu toteutettua (vaikka olisi keskenkin)
+
+Lisätyt luokat ja niiden toiminnot:
+- Data.scala 
+    1. datasetin alustaminen kaksiulotteisella taulukolla liukulukuja
+    2. automaattinen muuttujannimien luonti
+- Model.scala (abstrakti luokka regressiomalleille)
+    1. määrittelyt yhtälölle, jäännöksille ja sovituksille
+    2. kaikkien aliluokkien käytössä olevan puuttuvien tietojen poisto (listwise
+       deletion) ja uuden datasetin luonti
+    3. tarkistus, että datasetissä on tarpeeksi rivejä ja sarakkeita jotta
+       malli voidaan sovittaa
+- OLSModel.scala (Ordinary Least Squares Model, Model.scalan implementaatio)
+    1. käyttää puuttuvien tietojen poistoa
+    2. lisää dataan ykkösvektorin malliin vakiomuuttujaa varten (intercept)
+    3. pohja normaaliyhtälön laskemiselle
+
+*Mitä metodeja / toiminnallisuuksia on saatu testattua ko. luokissa, että ne 
+toimivat oikein?
+
+    - Kun datapisteitä tai nimiä ei ole, Data palauttaa Nonen
+    - Data ja Model palauttavat oikeat nimet
+    - Data palauttaa oikeat datapisteet
+    - Mallit palauttavat oikean poikkeuksen, kun ne alustetaan tyhjällä Datalla
+    - Data palauttaa oikean poikkeuksen, kun datavektorit ovat eri suuret
+    - OLSModel palauttaa oikein Nonet kun mallia ei ole sovitettu
+    - Mallin sovite ja jäännökset ovat olemassa mallin sovittamisen jälkeen
+    - Mallia varten luotua fitteData-oliota ei ole olemassa ennen sovittamista
+
+*Mitä mahdollisia hankalia virheitä on esiintynyt ja onko niitä saatu 
+ratkaistua?
+    
+    Paljon pieniä virheitä, jotka ovat ratkenneet yksikkötestien 
+    ja Googlen avulla
+
+*Mikä on käytetty työmäärä tänä aikana 5 tunnin tarkkuudella
+
+    Olisikohan noin 15 tuntia?
+
+*Oletko edellä vai jäljessä projektisuunnitelmassa arvioimaasi tilannetta suurin 
+piirtein tässä vaiheessa
+
+    Hieman jäljessä. Ensimmäisillä viikoilla oli odottamattoman paljon muita
+    asioita tehtävänä (tentti, harjoituksia ja luentoja) enkä ollut varannut
+    aikaa Data-luokan tekemiseen. En kuitenkaan ole paljoa jäljessä. 
+    Suunnitelman mukaan minulla pitäisi olla nyt regressiomallit valmiina ja
+    datan lukemisen testien kirjoitus aloitettuna. Regressiomallit valmistunevat
+    päivässä tai kahdessa.
