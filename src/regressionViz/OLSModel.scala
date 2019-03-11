@@ -8,10 +8,11 @@ class OLSModel (data: Data) extends Model (data)
     // listwise deletion for missing values
     if (fittedData.isEmpty) checkAndDeleteMissingRows
     
-    // check that there are enough rows to fit
+    // check that there are enough rows and columnts
     require(fittedData.isDefined && 
         fittedData.get.getPoints.isDefined &&
-        fittedData.get.getPoints.get.length > 1)
+        fittedData.get.getPoints.get.length > 1 &&
+        fittedData.get.getPoints.get(0).length> 0)
     
     calculateNormalEquation
     calculateResiduals

@@ -4,8 +4,10 @@ import scala.collection.mutable.ArrayBuffer
 
 abstract class Model (data: Data) 
 {
-  require(data.getPoints.isDefined && data.getPoints.get(0).length > 0
-      , "The data is empty. Model creation failed.")
+  require(data.getPoints.isDefined && 
+          data.getPoints.get(0).length > 0 &&
+          data.getPoints.get.length > 1, 
+          "There is not enough data to fit a model. Model creation failed.")
   
   var name: Option[String] = None
   protected var equation: Option[Array[Double]] = None
