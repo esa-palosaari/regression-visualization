@@ -172,14 +172,16 @@ class UnitTests {
   @Test def OLSModel_should_have_listwise_deletion ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0, Double.NaN))))
+    someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0.0, Double.NaN))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     assertTrue(
         "The OLS model should correctly delete rows with missing data. " +
-        "Instead fittedData is: " + olsModel.getFittedData.toString,
-        olsModel.getFittedData.get.getPoints.get(0)(0) == 1.23 && 
-        olsModel.getFittedData.get.getPoints.get(1)(0) == 0
+        "Instead fittedData is: " + olsModel.getFittedData.get.getPoints.get(0)(0) +
+        " " + olsModel.getFittedData.get.getPoints.get(1)(0) + " " +
+        olsModel.getFittedData.get.getPoints.get(2)(0),
+        olsModel.getFittedData.get.getPoints.get(1)(0) == 1.23 && 
+        olsModel.getFittedData.get.getPoints.get(2)(0) == 0.0
         )
   }
     

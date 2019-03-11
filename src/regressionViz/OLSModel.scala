@@ -19,19 +19,50 @@ class OLSModel (data: Data) extends Model (data)
   
   protected def calculateNormalEquation =
   {
-    val ata: Array[Array[Double]] = transpose_And_Multiply_Itself
-    val aty: Array[Double] = tranpose_And_Multiply_Outcome
-    val ataInverse: Array[Array[Double]] = invertMatrix
-    val estimate: Array[Double] = multiply_Matrix_And_Vector(ataInverse, aty)
+    // add the intercept to the equation (i.e. column of ones)
+    // take the last column out = outcome variable
+    val X: Array[Array[Double]] = 
+    {  
+      val originalPoints = fittedData.get.getPoints
+      val originalLength = originalPoints.get(0).length
+      val oneVector = Array.fill(originalLength)(1.0)
+      val newPoints = Some(oneVector +: originalPoints.get.dropRight(1))
+      fittedData.get.initializeDataset(
+          newPoints, 
+          fittedData.get.name, 
+          fittedData.get.getVarNames)
+      fittedData.get.getPoints.get
+    }
+    // outcome variable is the last one
+    val y: Array[Double] = fittedData.get.getPoints.get.last
+    val Xt: Array[Array[Double]] = transposeMatrix(X)
+    val XtX: Array[Array[Double]] = multiplyMatrices(Xt, X)
+    val Xty: Array[Double] = multiplyMatrixAndVector(Xt, y)
+    val XtXInverse: Array[Array[Double]] = invertMatrix(XtX)
+    val estimate: Array[Double] = multiplyMatrixAndVector(XtXInverse, Xty)
     equation = Some(estimate)
   }
   
-  def transpose_And_Multiply_Itself
-  def tranpose_And_Multiply_Outcome
-  def invertMatrix
-  def multiplyMatrix(Array[Array[Double]], Array[Array[Double]]) = 
+  def transposeMatrix(X: Array[Array[Double]]): Array[Array[Double]] =
   {
-    
+    X
+  }
+  
+  def multiplyMatrices(A: Array[Array[Double]], B: Array[Array[Double]]): 
+    Array[Array[Double]] =
+    {
+      A
+    }
+  
+  def invertMatrix(A: Array[Array[Double]]): Array[Array[Double]] =
+  {
+    A
+  }
+  
+  def multiplyMatrixAndVector(A: Array[Array[Double]], x: Array[Double]):
+    Array[Double] = 
+  {
+    x
   }
 
   def calculateResiduals =
