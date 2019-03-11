@@ -5,7 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 abstract class Model (data: Data) 
 {
   require(data.getPoints.isDefined && 
-          data.getPoints.get(0).length > 0 &&
+          data.getPoints.get(0).length > 1 &&
           data.getPoints.get.length > 1, 
           "There is not enough data to fit a model. Model creation failed.")
   

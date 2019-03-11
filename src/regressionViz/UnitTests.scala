@@ -154,7 +154,7 @@ class UnitTests {
     olsModel.fitData
     assertTrue(
         "The OLS model should not be fitted when there are not enough rows. " +
-        "Instead equation is: " + olsModel.getEquation.toString,
+        "Instead equation is: " + olsModel.getEquation.get(0),
         !olsModel.getEquation.isDefined
         )
   }
@@ -178,10 +178,9 @@ class UnitTests {
     assertTrue(
         "The OLS model should correctly delete rows with missing data. " +
         "Instead fittedData is: " + olsModel.getFittedData.get.getPoints.get(0)(0) +
-        " " + olsModel.getFittedData.get.getPoints.get(1)(0) + " " +
-        olsModel.getFittedData.get.getPoints.get(2)(0),
-        olsModel.getFittedData.get.getPoints.get(1)(0) == 1.23 && 
-        olsModel.getFittedData.get.getPoints.get(2)(0) == 0.0
+        " " + olsModel.getFittedData.get.getPoints.get(1)(0),
+        olsModel.getFittedData.get.getPoints.get(0)(0) == 1.23 && 
+        olsModel.getFittedData.get.getPoints.get(1)(0) == 0.0
         )
   }
     
