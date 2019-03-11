@@ -31,7 +31,8 @@ toimivat oikein?
 
 *Mitä mahdollisia hankalia virheitä on esiintynyt ja onko niitä saatu 
 ratkaistua?
-    - Palojn pieniä virheitä, jotka ovat ratkenneet yksikkötestien 
+    
+    Paljon pieniä virheitä, jotka ovat ratkenneet yksikkötestien 
     ja Googlen avulla
 
 *Mikä on käytetty työmäärä tänä aikana 5 tunnin tarkkuudella
