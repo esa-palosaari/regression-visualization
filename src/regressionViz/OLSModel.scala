@@ -13,7 +13,9 @@ class OLSModel (data: Data) extends Model (data)
     require(fittedData.isDefined && 
         fittedData.get.getPoints.isDefined &&
         fittedData.get.getPoints.get.length > 1 &&
-        fittedData.get.getPoints.get(0).length> 1)
+        fittedData.get.getPoints.get(0).length> 1,
+        "There should be enough rows and columns " +
+        "in the dataset after listwise deletion.")
     
     calculateNormalEquation
     calculateResiduals
@@ -41,6 +43,10 @@ class OLSModel (data: Data) extends Model (data)
     equation = Some(estimate)
   }
   
+  
+  /*
+   * helper functions for normal equation calculation
+   */
   def multiplyMatrices(A: Array[Array[Double]], B: Array[Array[Double]]): 
     Array[Array[Double]] =
     {

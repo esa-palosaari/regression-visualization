@@ -45,23 +45,21 @@ abstract class Model (data: Data)
       while (columnIndex < originalColumns && missingFound == false)
       {
         // check whether there is a missing value
-        if(originalPoints(columnIndex)(rowIndex) == Double.NaN)
+        if(originalPoints(columnIndex)(rowIndex) equals Double.NaN) 
           missingFound = true
-        
-        columnIndex += 1
+        else 
+          columnIndex += 1
       }
 
       // if there are were no missing values, add the row to new dataset
       if (missingFound == false)
       {
         columnIndex = 0
-        
         while (columnIndex < originalColumns)
         {
           fitPoints(columnIndex) += originalPoints(columnIndex)(rowIndex)
           columnIndex += 1
-        }
-        
+        } 
       }
       
       // move to next row
