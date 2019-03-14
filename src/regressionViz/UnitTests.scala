@@ -188,6 +188,46 @@ class UnitTests {
 //        olsModel.getFittedData.get.getPoints.get(1)(0) == 0.0
 //        )
   }
+  
+  @Test def OLSModel_should_give_the_correct_coefficients ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 1.0), 
+                                                      Array(2.0, 1.0),
+                                                      Array(3.0, 4.0))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    assertTrue(
+      "The OLSModel should give the coefficients 0.571 and 0.857.\n" +
+      "Instead got " + olsModel.getEquation.get(0) + " and " + 
+      olsModel.getEquation.get(1),
+      olsModel.getEquation.get(0) >= 0.571 &&
+      olsModel.getEquation.get(0) < 0.572 &&
+      olsModel.getEquation.get(1) >= 0.857 &&
+      olsModel.getEquation.get(1) < 0.858     
+    )
+  }
+  
+  @Test def OLSModel_invertMatrix_should_give_correct_matrix ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 1.0), 
+                                                      Array(2.0, 1.0),
+                                                      Array(3.0, 4.0))))
+    val olsModel = new OLSModel(someData) 
+    val A: Array[Array[Double]] = Array(Array(3, 3.2), Array(3.5, 3.6))
+    val invertedMatrix: Array[Array[Double]] = olsModel.invertMatrix(A)
+    assertTrue(
+        "\nInstead of -9.0, A(0,0) is " + invertedMatrix(0)(0) +
+        "\n instead of 8.0, A(0,1) is " + invertedMatrix(0)(1) +
+        "\n instead of 8.75, A(0,1) is " + invertedMatrix(1)(0) +
+        "\n instead of -7.5, A(0,1) is " + invertedMatrix(1)(1),
+    invertedMatrix(0)(0) == -9.0 &&
+    invertedMatrix(0)(1) == 8.0 &&
+    invertedMatrix(1)(0) == 8.75 &&
+    invertedMatrix(1)(1) == -7.5
+    )
+  }
     
   
 }

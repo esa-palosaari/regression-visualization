@@ -77,18 +77,68 @@ class OLSModel (data: Data) extends Model (data)
   def invertMatrix(A: Array[Array[Double]]): Array[Array[Double]] =
   {
     require(A.length == A(0).length)
-    
+    val size = A.length
     // Use Gauss-Method to get the inverse
-    // Here's C++ code 
-    // https://www.geeksforgeeks.org/finding-inverse-of-a-matrix-using-gauss-jordan-method/
+    // Here's Java code
+    // http://cljavacode.blogspot.com/2017/06/inverse-matrix-by-gauss-jordan.html
+
     // Create an augmented matrix and add an identity matrix
     // at the right side of the original matrix
+    var augA: Array[Array[Double]] = Array.ofDim(size*2, size)
+    for 
+    {
+      colIndex <- 0 until 2*size
+      rowIndex <- 0 until size
+    }
+    {
+      if (colIndex >= size)
+      {
+        if (colIndex == rowIndex)
+          augA(colIndex)(rowIndex) = 1.0
+        else
+          augA(colIndex)(rowIndex) = 0.0
+      }
+      else
+        augA(colIndex)(rowIndex) = A(colIndex)(rowIndex)
+    }
     
-    // interchange the rows of the matrix
+   
     
     // replace a row by a sum of itself and a constant multiple
     // of another row of the matrix
-    A
+    for 
+    {
+      colIndex <- 0 until 2*size
+      rowIndex <- 0 until size
+    }
+    {
+      if (colIndex != rowIndex)
+      {
+        val temporary = augA(colIndex)(rowIndex) / augA(rowIndex)(rowIndex)
+        for (k <- 0 until 2*size)
+          augA(k)(rowIndex) -= augA(k)(rowIndex)*temporary
+      }
+    }
+    
+    // Multiply each row by a nonzero integer
+    // devide row element by the diagonal element
+    for (rowIndex <- 0 until size)
+    {
+      val temporary = augA(rowIndex)(rowIndex)
+      for (colIndex <- 0 until 2*size)
+        augA(colIndex)(rowIndex) = augA(colIndex)(rowIndex)*temporary
+    }
+    
+    var inverseA: Array[Array[Double]] = Array.ofDim(size, size) 
+    for 
+    {
+      colIndex <- size until 2*size
+      rowIndex <- 0 until size
+    }
+    {
+      inverseA(colIndex-size)(rowIndex) = augA(colIndex)(rowIndex)      
+    }
+    return inverseA
   }
   
   def multiplyMatrixAndVector(A: Array[Array[Double]], x: Array[Double]):
