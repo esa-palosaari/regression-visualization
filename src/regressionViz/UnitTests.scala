@@ -180,21 +180,13 @@ class UnitTests {
     someData.initializeDataset(newPoints = Some(Array(Array(1.23, 3.1343), Array(0.0, Double.NaN))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
-//    assertTrue(
-//        "The OLS model should correctly delete rows with missing data. " +
-//        "Instead fittedData is: " + olsModel.getFittedData.get.getPoints.get(0)(0) +
-//        " " + olsModel.getFittedData.get.getPoints.get(1)(0),
-//        olsModel.getFittedData.get.getPoints.get(0)(0) == 1.23 && 
-//        olsModel.getFittedData.get.getPoints.get(1)(0) == 0.0
-//        )
   }
   
   @Test def OLSModel_should_give_the_correct_coefficients ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 1.0), 
-                                                      Array(2.0, 1.0),
-                                                      Array(3.0, 4.0))))
+    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 2.0, 3.0), 
+                                                      Array(1.0, 1.0, 4.0))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     assertTrue(
@@ -222,10 +214,25 @@ class UnitTests {
         "\n instead of 8.0, A(0,1) is " + invertedMatrix(0)(1) +
         "\n instead of 8.75, A(1,0) is " + invertedMatrix(1)(0) +
         "\n instead of -7.5, A(1,1) is " + invertedMatrix(1)(1),
-    invertedMatrix(0)(0) == -9.0 &&
-    invertedMatrix(0)(1) == 8.0 &&
-    invertedMatrix(1)(0) == 8.75 &&
-    invertedMatrix(1)(1) == -7.5
+      invertedMatrix(0)(0) == -9.0 &&
+      invertedMatrix(0)(1) == 8.0 &&
+      invertedMatrix(1)(0) == 8.75 &&
+      invertedMatrix(1)(1) == -7.5
+    )
+  }
+  
+  @Test def OLSModel_multiplyMatrices_should_give_correct_answer ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 1.0), 
+                                                      Array(2.0, 1.0),
+                                                      Array(3.0, 4.0))))
+    val olsModel = new OLSModel(someData) 
+    val A: Array[Array[Double]] = Array(Array(1, 1), Array(2, 2))
+    val B: Array[Array[Double]] = Array(Array(1, 1), Array(2, 2), Array(3, 3))
+    val AB = olsModel.multiplyMatrices(A, B)
+    assertTrue(
+      AB(0)(0) == 3.0  
     )
   }
     

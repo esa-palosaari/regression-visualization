@@ -37,11 +37,23 @@ class OLSModel (data: Data) extends Model (data)
     }
     // outcome variable is the last one
     val y: Array[Double] = fittedData.get.getPoints.get.last
+    println("before transpose: ")
+    printMatrix(X)
+  
     val Xt: Array[Array[Double]] = X.transpose
+    println("after transpose: ")
+    printMatrix(Xt)
+    
     val XtX: Array[Array[Double]] = multiplyMatrices(Xt, X)
     val Xty: Array[Double] = multiplyMatrixAndVector(Xt, y)
+    println("Xt times y: ")
+    Xty.map(println(_))
     val XtXInverse: Array[Array[Double]] = invertMatrix(XtX)
+    println("XtXInverse: ")
+    printMatrix(XtXInverse)
     val estimate: Array[Double] = multiplyMatrixAndVector(XtXInverse, Xty)
+    println("XtXInverse times Xty: ")
+    estimate.map(println(_))
     equation = Some(estimate)
   }
   
@@ -57,7 +69,7 @@ class OLSModel (data: Data) extends Model (data)
       val commonLength = A.length
       val rowsC = A(0).length
       val colsC = B.length
-      var C: Array[Array[Double]] = Array.ofDim(rowsC, colsC)
+      var C: Array[Array[Double]] = Array.ofDim(colsC, rowsC)
       
       for 
       {
