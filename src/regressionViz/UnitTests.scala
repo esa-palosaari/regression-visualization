@@ -220,8 +220,8 @@ class UnitTests {
     assertTrue(
         "\nInstead of -9.0, A(0,0) is " + invertedMatrix(0)(0) +
         "\n instead of 8.0, A(0,1) is " + invertedMatrix(0)(1) +
-        "\n instead of 8.75, A(0,1) is " + invertedMatrix(1)(0) +
-        "\n instead of -7.5, A(0,1) is " + invertedMatrix(1)(1),
+        "\n instead of 8.75, A(1,0) is " + invertedMatrix(1)(0) +
+        "\n instead of -7.5, A(1,1) is " + invertedMatrix(1)(1),
     invertedMatrix(0)(0) == -9.0 &&
     invertedMatrix(0)(1) == 8.0 &&
     invertedMatrix(1)(0) == 8.75 &&

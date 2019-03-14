@@ -1,5 +1,7 @@
 package regressionViz
 
+import scala.math._
+
 class OLSModel (data: Data) extends Model (data)
 {
 
@@ -87,59 +89,112 @@ class OLSModel (data: Data) extends Model (data)
     var augA: Array[Array[Double]] = Array.ofDim(size*2, size)
     for 
     {
-      colIndex <- 0 until 2*size
       rowIndex <- 0 until size
     }
     {
-      if (colIndex >= size)
-      {
-        if (colIndex == rowIndex)
-          augA(colIndex)(rowIndex) = 1.0
-        else
-          augA(colIndex)(rowIndex) = 0.0
-      }
-      else
-        augA(colIndex)(rowIndex) = A(colIndex)(rowIndex)
+      augA(rowIndex+size)(rowIndex) = 1.0
     }
     
-   
-    
-    // replace a row by a sum of itself and a constant multiple
-    // of another row of the matrix
     for 
     {
-      colIndex <- 0 until 2*size
-      rowIndex <- 0 until size
+      col <- 0 until size            
+      row <- 0 until size
     }
     {
-      if (colIndex != rowIndex)
+      augA(col)(row) = A(col)(row)
+    }
+    
+    println("Initialized: ")
+    printMatrix(augA)
+    
+    
+    // get the max diagonal
+    for(row <- 0 until size)
+    {
+      var maks: Double = 0.0
+      var maxRow: Int = row
+      for(column <- row until size)
       {
-        val temporary = augA(colIndex)(rowIndex) / augA(rowIndex)(rowIndex)
-        for (k <- 0 until 2*size)
-          augA(k)(rowIndex) -= augA(k)(rowIndex)*temporary
+        if (abs(augA(column)(row)) > maks)
+        {
+          maks = abs(augA(column)(row))
+          maxRow = column   
+        }
+      }
+      if(maxRow != row)
+      {
+        // swap rows maxRow and row
+        for (kolumn <- 0 until size*2)
+        {
+          val temporary = augA(kolumn)(maxRow)
+          augA(kolumn)(maxRow) = augA(kolumn)(row)
+          augA(kolumn)(row) = temporary
+        }
       }
     }
     
-    // Multiply each row by a nonzero integer
-    // devide row element by the diagonal element
+    println("max diagonal: ")
+    printMatrix(augA)
+    
+    // diagonalize the matrix
+    for 
+    {
+      rowIndex <- 0 until size
+      rowIndex2 <- 0 until size
+    }
+    {
+      if (rowIndex2 != rowIndex)
+      {
+        val temporary = augA(rowIndex)(rowIndex2) / augA(rowIndex)(rowIndex)
+        for (k <- 0 until 2*size)
+          augA(k)(rowIndex2) -= augA(k)(rowIndex)*temporary
+      }
+    }
+    
+    println("Diagonalizd: ")
+    printMatrix(augA)
+    
+    // divide by diagonal
     for (rowIndex <- 0 until size)
     {
       val temporary = augA(rowIndex)(rowIndex)
-      for (colIndex <- 0 until 2*size)
-        augA(colIndex)(rowIndex) = augA(colIndex)(rowIndex)*temporary
+      
+      for (colIndex <- size until 2*size)
+      {
+        augA(colIndex)(rowIndex) = augA(colIndex)(rowIndex)/temporary        
+      }
+      augA(rowIndex)(rowIndex) = augA(rowIndex)(rowIndex)/temporary
     }
     
+    println("Divided: ")
+    printMatrix(augA)
+    
+    // take the inverse out
     var inverseA: Array[Array[Double]] = Array.ofDim(size, size) 
     for 
     {
-      colIndex <- size until 2*size
       rowIndex <- 0 until size
+      colIndex <- size until 2*size
     }
     {
       inverseA(colIndex-size)(rowIndex) = augA(colIndex)(rowIndex)      
     }
     return inverseA
   }
+  
+  def printMatrix(A: Array[Array[Double]]) = 
+  {
+    for
+    {
+      row <- 0 until A(0).length      
+      column <- 0 until A.length
+    }
+    {     
+      print(" " + (100*A(column)(row)).round / 100.toDouble + " ")
+      if(column == A.length - 1) print("\n")      
+    }
+  }
+  
   
   def multiplyMatrixAndVector(A: Array[Array[Double]], x: Array[Double]):
     Array[Double] = 
