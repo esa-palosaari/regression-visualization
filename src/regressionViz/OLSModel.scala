@@ -231,7 +231,20 @@ class OLSModel (data: Data) extends Model (data)
 
   def calculateResiduals =
   {
-    
+    require(equation.isDefined && 
+            fittedData.isDefined &&
+            fittedData.get.getPoints.isDefined)
+    val N = fittedData.get.getPoints.get(0).length  
+    val fittedPoints = fittedData.get.getPoints.get
+    var calculatedResiduals: Array[Double] = Array.ofDim(N)
+                                                         
+    for (i <- 0 until N)
+    {
+      calculatedResiduals(i) = fittedPoints.last(i) - (equation.get(0) + 
+          equation.get.tail.zip(fittedPoints).map(x => x._1 * x._2(i)).reduce(_ + _)) 
+    }
+     
+    residuals = Some(calculatedResiduals)
   }
   
 }

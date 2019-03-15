@@ -235,6 +235,26 @@ class UnitTests {
       AB(0)(0) == 3.0  
     )
   }
+  
+  @Test def OLSModel_residuals_should_be_correct ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 2.0, 3.0), 
+                                                      Array(1.0, 1.0, 4.0))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    assertTrue(
+        "Instead of 0.428< x <0.429, residuals(0) is " + olsModel.getResiduals.get(0)+
+        "\nInstead of -1.288 < x < -1.285, residuals(1) is " + olsModel.getResiduals.get(1)+
+        "\nInstead of 0.854 < x < 0.858, residuals(2) is " + olsModel.getResiduals.get(2),
+        olsModel.getResiduals.get(0) >= 0.428 &&
+        olsModel.getResiduals.get(0) <= 0.429 &&
+        olsModel.getResiduals.get(1) <= -1.285 &&
+        olsModel.getResiduals.get(1) >= -1.288 &&
+        olsModel.getResiduals.get(2) <= 0.858 &&
+        olsModel.getResiduals.get(2) >= 0.854   
+    )
+  }
     
   
 }
