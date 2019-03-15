@@ -37,23 +37,23 @@ class OLSModel (data: Data) extends Model (data)
     }
     // outcome variable is the last one
     val y: Array[Double] = fittedData.get.getPoints.get.last
-    println("before transpose: ")
-    printMatrix(X)
+//    println("before transpose: ")
+//    printMatrix(X)
   
     val Xt: Array[Array[Double]] = X.transpose
-    println("after transpose: ")
-    printMatrix(Xt)
+//    println("after transpose: ")
+//    printMatrix(Xt)
     
     val XtX: Array[Array[Double]] = multiplyMatrices(Xt, X)
     val Xty: Array[Double] = multiplyMatrixAndVector(Xt, y)
-    println("Xt times y: ")
-    Xty.map(println(_))
+//    println("Xt times y: ")
+//    Xty.map(println(_))
     val XtXInverse: Array[Array[Double]] = invertMatrix(XtX)
-    println("XtXInverse: ")
-    printMatrix(XtXInverse)
+//    println("XtXInverse: ")
+//    printMatrix(XtXInverse)
     val estimate: Array[Double] = multiplyMatrixAndVector(XtXInverse, Xty)
-    println("XtXInverse times Xty: ")
-    estimate.map(println(_))
+//    println("XtXInverse times Xty: ")
+//    estimate.map(println(_))
     equation = Some(estimate)
   }
   
@@ -116,8 +116,8 @@ class OLSModel (data: Data) extends Model (data)
       augA(col)(row) = A(col)(row)
     }
     
-    println("Initialized: ")
-    printMatrix(augA)
+//    println("Initialized: ")
+//    printMatrix(augA)
     
     
     // get the max diagonal
@@ -145,8 +145,8 @@ class OLSModel (data: Data) extends Model (data)
       }
     }
     
-    println("max diagonal: ")
-    printMatrix(augA)
+//    println("max diagonal: ")
+//    printMatrix(augA)
     
     // diagonalize the matrix
     for 
@@ -163,8 +163,8 @@ class OLSModel (data: Data) extends Model (data)
       }
     }
     
-    println("Diagonalizd: ")
-    printMatrix(augA)
+//    println("Diagonalizd: ")
+//    printMatrix(augA)
     
     // divide by diagonal
     for (rowIndex <- 0 until size)
@@ -178,8 +178,8 @@ class OLSModel (data: Data) extends Model (data)
       augA(rowIndex)(rowIndex) = augA(rowIndex)(rowIndex)/temporary
     }
     
-    println("Divided: ")
-    printMatrix(augA)
+//    println("Divided: ")
+//    printMatrix(augA)
     
     // take the inverse out
     var inverseA: Array[Array[Double]] = Array.ofDim(size, size) 
@@ -234,6 +234,7 @@ class OLSModel (data: Data) extends Model (data)
     require(equation.isDefined && 
             fittedData.isDefined &&
             fittedData.get.getPoints.isDefined)
+            
     val N = fittedData.get.getPoints.get(0).length  
     val fittedPoints = fittedData.get.getPoints.get
     var calculatedResiduals: Array[Double] = Array.ofDim(N)
