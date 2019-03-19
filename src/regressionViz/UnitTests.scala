@@ -259,19 +259,19 @@ class UnitTests {
   @Test def Drawing_should_have_correct_maximum_and_minimum ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 2.0, 3.0), 
-                                                      Array(1.0, 1.0, 4.0))))
+    someData.initializeDataset(newPoints = Some(Array(Array(-1.0, 2.0, 3.0), 
+                                                      Array(-1.0, 1.0, 4.0))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     val kuva = new Drawing(olsModel)    
     assertTrue(
-      "The smallest x value should be 0.0, it is: " + kuva.minX +
+      "The smallest x value should be -1.0, it is: " + kuva.minX +
       "\nThe largest x value should be 3.0, it is: " +kuva.maxX +
-      "\nThe smallest y value should be 1.0, it is: " +kuva.minY +
+      "\nThe smallest y value should be -1.0, it is: " +kuva.minY +
       "\nThe largest y value should be 4.0, it is:" + kuva.maxY,
-      kuva.minX == 0.0 &&
+      kuva.minX == -1.0 &&
       kuva.maxX == 3.0 &&
-      kuva.minY == 1.0 &&
+      kuva.minY == -1.0 &&
       kuva.maxY == 4.0
     )
   }

@@ -39,22 +39,29 @@ class Drawing (val model: Model)
   val x = points(0)
   val maxX = x.max 
   val minX = x.min
-  val maxY = y.max
-  val minY = y.min
+  val maxY = max(y.max, 
+                 max(model.getEquation.get(0), 
+                     max(model.getEquation.get(0)+model.getEquation.get(1)*maxX,
+                         model.getEquation.get(0)+model.getEquation.get(1)*minX
+                         )
+                     )
+                )
+  val minY = min(y.min, 
+                 min(model.getEquation.get(0), 
+                     min(model.getEquation.get(0)+model.getEquation.get(1)*maxX,
+                         model.getEquation.get(0)+model.getEquation.get(1)*minX
+                         )
+                     )
+                )
   var xHeight = size._2*(1.0- margin)
   var yWidth = size._1*margin
   
-  var axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2.0)))/maxX).toInt
-  if (maxX.signum != minX.signum) 
-    axisXUnit = (((1.0-margin*2.0)*size._1.toDouble)/abs(maxX-minX)).floor.toInt
-  else if (maxX.signum < 0)
-    axisXUnit = (size._1.toDouble*(1-(margin*2))/minX).floor.toInt
+  var axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2.0)))/
+                         max(abs(maxX-minX),abs(minX-maxX))).toInt
     
-  var axisYUnit: Int = (size._2.toDouble*(1.0-(margin*2))/maxY).floor.toInt
-  if (maxY.signum != minY.signum) 
-    axisYUnit = (size._2.toDouble/abs(maxX-minX)).floor.toInt
-  else if (maxY.signum < 0)
-    axisYUnit = (size._1.toDouble/minY).floor.toInt
+  var axisYUnit: Int = (size._2.toDouble*(1.0-(margin*2))/
+                        max(abs(maxY-minY), abs(minY-maxY))).floor.toInt
+
 
   // draw coordinate lines
   g.setStroke(new BasicStroke())
@@ -79,8 +86,8 @@ class Drawing (val model: Model)
   (points(0) zip points.last).map(
                                     x => g.fill(
                                                  new Ellipse2D.Double(
-                                                   (size._1*margin) + x._1*axisXUnit, 
-                                                   (size._2*(1.0-margin)) - x._2*axisYUnit,
+                                                   (size._1*margin) + (x._1-minX)*axisXUnit, 
+                                                   (size._2*(1.0-margin)) - (x._2-minY)*axisYUnit,
                                                    5.0, // size
                                                    5.0 // size   
                                                  )
@@ -91,11 +98,10 @@ class Drawing (val model: Model)
   g.setColor(Color.BLUE)
   g.draw(new Line2D.Double(
                              margin*size._1,
-                             size._2*(1.0-margin) - axisXUnit*(model.getEquation.get(0) +
-                                                         model.getEquation.get(1)*minX),
+                             size._2*(1.0-margin) - axisXUnit*(model.getEquation.get(0)-minY),
                              (1.0-margin)*size._1,
                              size._2*(1.0-margin) - axisXUnit*(model.getEquation.get(0)+
-                                                         model.getEquation.get(1)*maxX))
+                                                         model.getEquation.get(1)*maxX-minY))
   )
   
   g.dispose()
