@@ -60,32 +60,43 @@ class Drawing (val model: Model)
   g.setStroke(new BasicStroke())
   g.setColor(new Color(0,0,0)) // set to black
   g.draw(new Line2D.Double(
-                           margin*size._1, 
-                           xHeight, 
-                           (1.0-margin)*size._1, 
-                           xHeight
+                             margin*size._1, 
+                             xHeight, 
+                             (1.0-margin)*size._1, 
+                             xHeight
                           )
         )
   g.draw(new Line2D.Double(
-                            yWidth, 
-                            margin*size._2, 
-                            yWidth, 
-                            (1.0-margin)*size._2
+                              yWidth, 
+                              margin*size._2, 
+                              yWidth, 
+                              (1.0-margin)*size._2
                            )
          )
   
   // draw data points
   g.setColor(Color.RED)
   (points(0) zip points.last).map(
-                                  x => g.fill(
-                                         new Ellipse2D.Double(
-                                           (size._1*margin) + x._1*axisXUnit, 
-                                           (size._2*(1.0-margin)) - x._2*axisYUnit,
-                                           5.0, // size
-                                           5.0 // size   
-                                           )
-                                         ) 
+                                    x => g.fill(
+                                                 new Ellipse2D.Double(
+                                                   (size._1*margin) + x._1*axisXUnit, 
+                                                   (size._2*(1.0-margin)) - x._2*axisYUnit,
+                                                   5.0, // size
+                                                   5.0 // size   
+                                                 )
+                                               ) 
                                    )
+                                   
+  // draw the regression line
+  g.setColor(Color.BLUE)
+  g.draw(new Line2D.Double(
+                             margin*size._1,
+                             size._2*(1.0-margin) - axisXUnit*(model.getEquation.get(0) +
+                                                         model.getEquation.get(1)*minX),
+                             (1.0-margin)*size._1,
+                             size._2*(1.0-margin) - axisXUnit*(model.getEquation.get(0)+
+                                                         model.getEquation.get(1)*maxX))
+  )
   
   g.dispose()
   
