@@ -44,9 +44,9 @@ class Drawing (val model: Model)
   var xHeight = size._2*(1.0- margin)
   var yWidth = size._1*margin
   
-  var axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2)))/maxX).ceil.toInt
+  var axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2.0)))/maxX).toInt
   if (maxX.signum != minX.signum) 
-    axisXUnit = (size._1.toDouble/abs(maxX-minX)).floor.toInt
+    axisXUnit = (((1.0-margin*2.0)*size._1.toDouble)/abs(maxX-minX)).floor.toInt
   else if (maxX.signum < 0)
     axisXUnit = (size._1.toDouble*(1-(margin*2))/minX).floor.toInt
     
