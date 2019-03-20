@@ -102,6 +102,30 @@ class Drawing (val model: Model)
                            )
   )
   
+  // write numbers on x- and y-axes
+  g.setFont(new Font("Arial", Font.PLAIN, 12))
+  g.drawString("0", (margin*size._1 - axisUnit*minX).toInt, ((1.0-0.7*margin)*size._2).toInt)
+  g.drawString("0", (0.7*margin*size._1).toInt, ((1.0-margin)*size._2 + axisUnit*minY).toInt)
+  
+  
+  
+  // write the names of variables
+  g.drawString(  model.getFittedData.get.getVarNames.get(0), 
+                 size._1/2, 
+                 ((1.0-0.3*margin)*size._2).toInt
+              )
+  // rotate string
+  // https://stackoverflow.com/questions/10083913/how-to-rotate-text-with-graphics2d-in-java
+  var transformation: AffineTransform = new AffineTransform()
+  val plainFont: Font = new Font("Arial", Font.PLAIN, 12)
+  transformation.rotate(toRadians(-90), 0, 0)
+  val rotatedFont = plainFont.deriveFont(transformation)
+  g.setFont(rotatedFont)
+  g.drawString(
+                model.getFittedData.get.getVarNames.get.last, 
+                (0.3*margin*size._1).toInt ,
+                size._2/2
+              )
   // draw data points
   g.setColor(Color.RED)
   (points(0) zip points.last).map(
