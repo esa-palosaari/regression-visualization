@@ -260,18 +260,18 @@ class UnitTests {
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(-1.0, 2.0, 3.0), 
-                                                      Array(-1.0, 1.0, 4.0))))
+                                                      Array(-1.0, 2.0, 4.0))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     val kuva = new Drawing(olsModel)    
     assertTrue(
       "The smallest x value should be -1.0, it is: " + kuva.minX +
       "\nThe largest x value should be 3.0, it is: " +kuva.maxX +
-      "\nThe smallest y value should be -1.0, it is: " +kuva.minY +
+      "\nThe smallest y value should be less than -1.0, it is: " +kuva.minY +
       "\nThe largest y value should be 4.0, it is:" + kuva.maxY,
       kuva.minX == -1.0 &&
       kuva.maxX == 3.0 &&
-      kuva.minY == -1.0 &&
+      kuva.minY <= -1.0 &&
       kuva.maxY == 4.0
     )
   }
