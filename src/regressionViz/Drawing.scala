@@ -1,7 +1,8 @@
 package regressionViz
 
 // trying things out for now
-// using this example: http://otfried.org/scala/drawing.html
+// using this example: http://otfried.org/scala/drawing.html as the basis
+
 import java.awt.image.BufferedImage
 import java.awt.{Graphics2D, Color, Font, BasicStroke}
 import java.awt.geom._
@@ -57,10 +58,10 @@ class Drawing (val model: Model)
   val yWidth = size._1*margin
   
   val axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2.0)))/
-                         max(abs(maxX-minX),abs(minX-maxX))).floor.toInt
+                         max(abs(maxX.toInt-minX.toInt),abs(minX.toInt-maxX.toInt))).floor.toInt
     
   val axisYUnit: Int = (size._2.toDouble*(1.0-(margin*2.0))/
-                        max(abs(maxY-minY), abs(minY-maxY))).floor.toInt
+                        max(abs(maxY.toInt-minY.toInt), abs(minY.toInt-maxY.toInt))).floor.toInt
                         
   val axisUnit: Int = min(axisXUnit, axisYUnit)
 
@@ -104,10 +105,30 @@ class Drawing (val model: Model)
   
   // write numbers on x- and y-axes
   g.setFont(new Font("Arial", Font.PLAIN, 12))
-  g.drawString("0", (margin*size._1 - axisUnit*minX).toInt, ((1.0-0.7*margin)*size._2).toInt)
-  g.drawString("0", (0.7*margin*size._1).toInt, ((1.0-margin)*size._2 + axisUnit*minY).toInt)
+  // zeros, TODO: update writing 0 to handle cases where the origo is outside the screen?
+  g.drawString(0.toString, (margin*size._1 - axisUnit*minX).toInt, ((1.0-0.7*margin)*size._2).toInt)
+  g.drawString(0.toString, (0.7*margin*size._1).toInt, ((1.0-margin)*size._2 + axisUnit*minY).toInt)
+  // number of axisUnits that fit on the coordinate axes
+  val numberOfUnitsX = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
+  val numberOfUnitsY = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
+  // x-axis  
+  // get the order of the variable values
+  var orderX = max(log10(abs(maxX)).floor.toInt, log10(abs(minX)).floor.toInt)
+  if (orderX == 0) orderX = 1
+  // get the rounded end point
+  val smallestTickX = ((minX.ceil.toInt + orderX/2)/orderX)*orderX
+  val largestTickX = ((maxX.floor.toInt + orderX/2)/orderX)*orderX
   
-  
+  var index = largestTickX
+  while (index >= smallestTickX)
+  {
+    g.drawString(  
+                  index.toString, 
+                  ((1.0-margin)*size._1 - (largestTickX-index)*axisUnit).toInt, 
+                  ((1.0-0.7*margin)*size._2).toInt
+                )
+    index -= orderX
+  }
   
   // write the names of variables
   g.drawString(  model.getFittedData.get.getVarNames.get(0), 
@@ -152,6 +173,8 @@ class Drawing (val model: Model)
                                                          minY)
                           )
   )
+  
+  // TODO: write the regression equation
   
   g.dispose()
   
