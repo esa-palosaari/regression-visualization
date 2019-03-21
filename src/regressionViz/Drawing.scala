@@ -106,29 +106,55 @@ class Drawing (val model: Model)
   // write numbers on x- and y-axes
   g.setFont(new Font("Arial", Font.PLAIN, 12))
   // zeros, TODO: update writing 0 to handle cases where the origo is outside the screen?
-  g.drawString(0.toString, (margin*size._1 - axisUnit*minX).toInt, ((1.0-0.7*margin)*size._2).toInt)
-  g.drawString(0.toString, (0.7*margin*size._1).toInt, ((1.0-margin)*size._2 + axisUnit*minY).toInt)
+//  g.drawString(0.toString, (margin*size._1 - axisUnit*minX).toInt, ((1-0.7*margin)*size._2).toInt)
+//  g.drawString(0.toString, (0.7*margin*size._1).toInt, ((1.0-0.7*margin)*size._2 + axisUnit*minY).toInt)
+
   // number of axisUnits that fit on the coordinate axes
   val numberOfUnitsX = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
   val numberOfUnitsY = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
-  // x-axis  
+
   // get the order of the variable values
   var orderX = max(log10(abs(maxX)).floor.toInt, log10(abs(minX)).floor.toInt)
-  if (orderX == 0) orderX = 1
-  // get the rounded end point
-  val smallestTickX = ((minX.ceil.toInt + orderX/2)/orderX)*orderX
-  val largestTickX = ((maxX.floor.toInt + orderX/2)/orderX)*orderX
-  
-  var index = largestTickX
-  while (index >= smallestTickX)
+  var orderY = max(log10(abs(maxY)).floor.toInt, log10(abs(minY)).floor.toInt)
+  // get the rounded end points 
+  //TODO: check whether x-ticks and y-ticks are same order
+  val smallestTickX = ((minX.ceil.toInt + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
+  val largestTickX = ((maxX.floor.toInt + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
+  val smallestTickY = ((minY.ceil.toInt + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
+  val largestTickY = ((maxY.ceil.toInt + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
+
+  // write the numbers from the smallest to the largest
+  // how many ticks smaller is maX than the image boundary? TODO: check if extraTick works with negative maxX
+  val extraTicksX = ((size._1.toDouble*(1.0-(2*margin)) - abs(maxX)*axisUnit).toInt/
+                      axisUnit).toInt
+
+  val extraTicksY = ((size._2.toDouble*(1.0-(2*margin)) - abs(maxY)*axisUnit).toInt/
+                      axisUnit).toInt                      
+  // x-axis
+  var index = largestTickX.toInt + extraTicksX.toInt //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
+  while (index >= minX)
   {
     g.drawString(  
                   index.toString, 
-                  ((1.0-margin)*size._1 - (largestTickX-index)*axisUnit).toInt, 
-                  ((1.0-0.7*margin)*size._2).toInt
+                  (margin*size._1  + (1+ index*pow(10,orderX))*axisUnit).toInt, // + abs(extraTicksX)*axisUnit
+                  ((1-0.7*margin)*size._2).toInt
                 )
-    index -= orderX
+    index -= pow(10,orderX).toInt
   }
+  // y-axis  
+  index = largestTickY.toInt + extraTicksY.toInt //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
+  while (index >= minY)
+  {
+    g.drawString(  
+                  index.toString, 
+                  (0.7*margin*size._1).toInt, 
+                  ((1.0-margin)*size._2  - (1+ index*pow(10,orderY))*axisUnit).toInt
+                )
+    index -= pow(10,orderY).toInt
+  }  
+  
+
+  // get the order of the variable values
   
   // write the names of variables
   g.drawString(  model.getFittedData.get.getVarNames.get(0), 
@@ -169,8 +195,8 @@ class Drawing (val model: Model)
                                                               minY),
                              (maxX-minX)*axisUnit + margin*size._1,
                              size._2*(1.0-margin) - axisUnit*(model.getEquation.get(0)+
-                                                         model.getEquation.get(1)*maxX - 
-                                                         minY)
+                                                              model.getEquation.get(1)*maxX - 
+                                                              minY)
                           )
   )
   
