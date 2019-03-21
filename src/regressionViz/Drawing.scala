@@ -117,7 +117,8 @@ class Drawing (val model: Model)
   var orderX = max(log10(abs(maxX)).floor.toInt, log10(abs(minX)).floor.toInt)
   var orderY = max(log10(abs(maxY)).floor.toInt, log10(abs(minY)).floor.toInt)
   // get the rounded end points 
-  //TODO: check whether x-ticks and y-ticks are same order
+  // TODO: check whether x-ticks and y-ticks are same order
+  // TODO: Check again how to transform to different orders
   val smallestTickX = ((minX.ceil.toInt + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
   val largestTickX = ((maxX.floor.toInt + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
   val smallestTickY = ((minY.ceil.toInt + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)

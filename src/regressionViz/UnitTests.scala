@@ -276,4 +276,14 @@ class UnitTests {
     )
   }
   
+  @Test def CSVReader_should_return_None_when_filename_invalid ()
+  {
+    val reader = new CSVReader
+    val data: Option[Data] = reader.readFile("")
+    assertTrue(
+    "Insted the returned value was: " + data.toString,
+    data.isEmpty
+    )
+  }
+  
 }
