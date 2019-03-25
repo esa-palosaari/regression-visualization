@@ -1,6 +1,5 @@
-
 25.3.
-*** Viikot 10-11 ***
+*** Viikot 11-12 ***
 *Muutaman rivin kuvauksen mitä luokkia on lisätty tai päivitetty ja mitä 
 toimintoja niissä on saatu toteutettua (vaikka olisi keskenkin)
 
