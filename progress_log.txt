@@ -1,3 +1,58 @@
+25.3.
+*** Viikot 11-12 ***
+*Muutaman rivin kuvauksen mitä luokkia on lisätty tai päivitetty ja mitä 
+toimintoja niissä on saatu toteutettua (vaikka olisi keskenkin)
+
+Lisätyt luokat ja toiminnot:
+- OLSModel.scala
+    1. Matriisien kertolaskut ja käänteismatriisin laskeminen toimivat.
+    2. PNS-menetelmän normaaliyhtälön laskeminen toimii.
+- Drawing.scala
+    1. Kuvan piirtäminen ja tallentaminen PNG-tiedostoon onnistuu.
+    2. Kuvaan pystyy piirtämään datapisteitä.
+    3. Kuvaan pystyy piirtämään regressiosuoran.
+    4. Kuvan koordinaattiakseleille voi kirjoittaa skaalautuvia numeroarvoja
+       (vaatinee vielä kehitystä)
+- DataReader.scala
+    1. abstraktille luokalle abstrakti tiedostonlukumetodi
+- CSVReader.scala
+    1. tiedostonlukemisen alkua
+    
+*Mitä metodeja / toiminnallisuuksia on saatu testattua ko. luokissa, että ne 
+toimivat oikein?
+
+    - Käänteismatriisin laskeminen oikein
+    - Regressioyhtälö lasketaan oikein
+    - Regressioyhtälön jäännökset lasketaan oikein
+    - Drawing-luokan toiminnallisuus lähinnä silmämääräisesti, mutta myös
+      joitain yksikkötestejä y- ja x-akselin ääriarvoille, kun
+      pisteitä ja regressiosuoraa yritetään sovittaa samaan kuvaan
+
+*Mitä mahdollisia hankalia virheitä on esiintynyt ja onko niitä saatu 
+ratkaistua?
+
+    - Normaaliyhtälön laskeminen oli erityisen hankalaa. Se ratkesi lopulta
+      sen avulla, että debuggasin println:ää käyttäen eli tulostin välituloksia.
+    
+    - Kuvan piirtämisessä on aavistuksen haasteellista se, että koordinaatiston
+      origo on kirjastossa vasemmassa yläkulmassa. Haasteellista on myös visua-
+      lisoinnin toimivaksi saaminen eri skaaloille.
+    
+*Mikä on käytetty työmäärä tänä aikana 5 tunnin tarkkuudella
+
+    20?
+
+*Oletko edellä vai jäljessä projektisuunnitelmassa arvioimaasi tilannetta suurin 
+piirtein tässä vaiheessa
+
+    Hankala arvioida, koska olen päätynyt tekemään asioita hieman toisessa
+    järjestyksessä kuin projektisuunnitelmaan on kirjattu. Korkeintaan viikon
+    jäljessä. Suunnitelmassani on juuri viikko puskuria. Tällä hetkellä
+    työn alla on datan lukeminen. Sen jälkeen komentorivikäyttöliittymä ja
+    lopuksi melkein kaikista toiminnoista vaihtoehtoinen versio (regressiomalli,
+    tiedostoformaatit, käyttöliittymä) ja koodin parantelua. 
+    
+
 *** Viikot 9-10 ***
 *Muutaman rivin kuvauksen mitä luokkia on lisätty tai päivitetty ja mitä 
 toimintoja niissä on saatu toteutettua (vaikka olisi keskenkin)
