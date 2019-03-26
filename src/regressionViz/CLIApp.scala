@@ -1,5 +1,5 @@
 package regressionViz
 
-class CLIApp {
+object CLIApp {
   
 }
