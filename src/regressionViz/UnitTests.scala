@@ -4,7 +4,6 @@ import org.junit.Test
 import org.junit.Assert._
 import org.junit.runner.RunWith
 
-
 class UnitTests {
   
   // Tests for an empty dataset
@@ -281,9 +280,24 @@ class UnitTests {
     val reader = new CSVReader
     val data: Option[Data] = reader.readFile("")
     assertTrue(
-    "Insted the returned value was: " + data.toString,
-    data.isEmpty
+      "Insted the returned value was: " + data.toString,
+      data.isEmpty
     )
   }
+  @Test def CSVReader_should_return_correct_data ()
+  {
+    val reader = new CSVReader
+    val data: Option[Data] = reader.readFile("testi.csv")
+    assertTrue(
+      "Instead of 1.0, (0,0) was: " + data.get.getPoints.get(0)(0),
+      data.get.getPoints.get(0)(0) == 1.0 && 
+      data.get.getPoints.get(0)(1) == 2.0 &&
+      data.get.getPoints.get(0)(2) == 3.0 &&
+      data.get.getPoints.get(1)(0) == -1.0 &&
+      data.get.getPoints.get(1)(1) == 2.0 &&
+      data.get.getPoints.get(1)(2) == 3.0
+    )
+  }
+  
   
 }
