@@ -1,17 +1,25 @@
 package regressionViz
 
 // example to follow: https://stackoverflow.com/questions/2315912/best-way-to-parse-command-line-parameters
+
+/*
+ *  How to run the jar file:
+ *  Install scala 2.12.3
+ *  Install java 8 or later
+ *  scala -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:regressionVizPack.jar" regressionViz.CLIApp data output   
+ */
 object CLIApp {
   val usage = """
       Options: cliapp data.csv output.png
     """
   //val engine = new Engine
+  type OptionMap = Map[Symbol, Any]
   
-  def main(args: Array[String]) 
+  def main(args: Array[String]): OptionMap =
   {
     if(args.length == 0) println(usage)
     val argumentList = args.toList
-    type OptionMap = Map[Symbol, Any]
+
     
     def nextOption(map: OptionMap, list: List[String]): OptionMap =
     {
@@ -26,6 +34,6 @@ object CLIApp {
       }
     }
     val options = nextOption(Map(), argumentList)
-    println(options)
+    options
   }
 }
