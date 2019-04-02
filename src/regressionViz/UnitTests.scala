@@ -299,5 +299,17 @@ class UnitTests {
     )
   }
   
+  @Test def CLIApp_parses_filenames_correctly ()
+  {
+    type OptionMap = Map[Symbol, Any]
+    val testapp = CLIApp
+    val options: OptionMap = testapp.main(Array("data.csv", "image.png"))
+    assertTrue(
+        "Datafile is: " + options('datafile) + 
+        "\nImagefile is. " + options('imagefile),
+      options('datafile).equals("data.csv") &&
+      options('imagefile).equals("image.png")
+    )
+  }
   
 }
