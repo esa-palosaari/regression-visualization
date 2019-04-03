@@ -18,6 +18,11 @@ class Engine {
     
   }
   
+  def fitModel() 
+  {
+    
+  }
+  
   def saveImage(image: Drawing, fileName: String) 
   {
     
