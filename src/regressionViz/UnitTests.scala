@@ -303,12 +303,12 @@ class UnitTests {
   {
     type OptionMap = Map[Symbol, Any]
     val testapp = CLIApp
-    val options: OptionMap = testapp.main(Array("data.csv", "image.png"))
+    val (datafname, imagefname) = testapp.main(Array("--o", "image.png", "--d", "data.csv", "test"))
     assertTrue(
-        "Datafile is: " + options('datafile) + 
-        "\nImagefile is. " + options('imagefile),
-      options('datafile).equals("data.csv") &&
-      options('imagefile).equals("image.png")
+        "Datafile is: " + datafname + 
+        "\nImagefile is. " + imagefname,
+      datafname.equals("data.csv") &&
+      imagefname.equals("image.png")
     )
   }
   
