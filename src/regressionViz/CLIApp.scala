@@ -10,30 +10,32 @@ package regressionViz
  */
 object CLIApp {
   val usage = """
-      Options: cliapp data.csv output.png
+      Options: cliapp --d data.csv --o output.png
     """
-  //val engine = new Engine
+  val engine = new Engine
   type OptionMap = Map[Symbol, Any]
   
-  def main(args: Array[String]): OptionMap =
+  def main(args: Array[String]): (String, String) =
   {
     if(args.length == 0) println(usage)
     val argumentList = args.toList
-
     
-    def nextOption(map: OptionMap, list: List[String]): OptionMap =
+    var dataFilename = ""
+    var imageFilename = ""
+    
+    args.sliding(2, 2).toList.collect 
     {
-      def isSwitch(s: String) = (s(0) == '-')
-      list match 
-      {
-        case Nil => map
-        case string :: tail => nextOption(map ++ Map('datafile -> string), list.tail)
-        case string :: Nil => nextOption(map ++ Map('imagefile -> string), list.tail)
-        case option :: tail => println("Unknown option " + option)
-                              sys.exit(1)
-      }
+      case Array("--d", dname: String) => dataFilename = dname
+      case Array("--o", iname: String) => imageFilename = iname
     }
-    val options = nextOption(Map(), argumentList)
-    options
+    
+    if(!dataFilename.equals("")) 
+    {
+      engine.readData(dataFilename)  
+    } else println("Please give the name of the data file.")
+    
+    
+    (dataFilename, imageFilename)
+
   }
 }
