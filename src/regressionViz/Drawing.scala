@@ -51,22 +51,27 @@ class Drawing (  val model: Model,
   val points = model.getFittedData.get.getPoints.get
   val y = points.last
   val x = points(0)
-  val maxX = x.max 
-  val minX = x.min
-  val maxY = max(y.max, 
-//                 max(model.getEquation.get(0), 
-                     max(model.getEquation.get(0)+model.getEquation.get(1)*maxX,
-                         model.getEquation.get(0)+model.getEquation.get(1)*minX
-                         )
-//                     )
-                )
-  val minY = min(y.min, 
-//                 min(model.getEquation.get(0), 
-                     min(model.getEquation.get(0)+model.getEquation.get(1)*maxX,
-                         model.getEquation.get(0)+model.getEquation.get(1)*minX
-                         )
-//                     )
-                )
+  val maxX: Int = xmax.getOrElse(x.max.toInt)
+  val minX: Int = xmin.getOrElse(x.min.toInt)
+  val maxY: Int = ymax.getOrElse(
+                                  max(y.max.toInt, 
+                                      max(model.getEquation.get(0)+
+                                          model.getEquation.get(1)*maxX,
+                                          model.getEquation.get(0)+
+                                          model.getEquation.get(1)*minX
+                                         ).toInt
+                                     )
+                                  )
+  val minY: Int = ymin.getOrElse(
+                                    min(y.min.toInt, 
+                                        min(model.getEquation.get(0)+
+                                            model.getEquation.get(1)*maxX,
+                                            model.getEquation.get(0)+
+                                            model.getEquation.get(1)*minX
+                                           ).toInt
+                                        )
+                                 )
+                                 
   val xHeight = size._2*(1.0- margin)
   val yWidth = size._1*margin
   
@@ -188,7 +193,11 @@ class Drawing (  val model: Model,
                 size._2/2
               )
   // draw data points
-  g.setColor(Color.RED)
+  g.setColor(new Color( pointColorR.getOrElse(255),
+                        pointColorB.getOrElse(0),
+                        pointColorG.getOrElse(0)
+                      )
+             )
   (points(0) zip points.last).map(
                                     x => g.fill(
                                                  new Ellipse2D.Double(
@@ -201,7 +210,11 @@ class Drawing (  val model: Model,
                                    )
                                    
   // draw the regression line
-  g.setColor(Color.BLUE)
+  g.setColor(new Color( curveColorR.getOrElse(0),
+                        curveColorB.getOrElse(255),
+                        curveColorG.getOrElse(0)
+                      )
+            )
   g.draw(new Line2D.Double(
                              margin*size._1,
                              size._2*(1.0-margin) - axisUnit*(model.getEquation.get(0) +
