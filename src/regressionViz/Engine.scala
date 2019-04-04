@@ -8,7 +8,7 @@ class Engine {
   var models: ArrayBuffer[Model] = ArrayBuffer[Model]()
   var visuals: ArrayBuffer[Drawing] = ArrayBuffer[Drawing]()
   
-  def readData(fileName: String) 
+  def readData(fileName: String) =
   {
     if (fileName.toLowerCase.endsWith(".csv"))
     {
@@ -18,10 +18,9 @@ class Engine {
     
   }
   
-  def fitModel() 
-  {
-    
-  }
+  def fitOLSModel(dataToFit: Data) = models += new OLSModel(dataToFit)
+  
+  def fitLogModel(dataToFit: Data) = models += new LogModel(dataToFit)
   
   def saveImage(image: Drawing, fileName: String) 
   {
