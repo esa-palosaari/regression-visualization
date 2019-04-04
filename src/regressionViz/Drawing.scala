@@ -8,12 +8,25 @@ import java.awt.{Graphics2D, Color, Font, BasicStroke}
 import java.awt.geom._
 import scala.math._
 
-class Drawing (val model: Model) 
+class Drawing (  val model: Model, 
+                 val sizex: Option[Int], 
+                 val sizey: Option[Int],
+                 var xmax: Option[Int],
+                 var xmin: Option[Int],
+                 var ymax: Option[Int],
+                 var ymin: Option[Int],
+                 val pointColorR: Option[Int],
+                 val pointColorB: Option[Int],
+                 val pointColorG: Option[Int],
+                 val curveColorR: Option[Int],
+                 val curveColorB: Option[Int],
+                 val curveColorG: Option[Int]
+              )
 {
   require(model.getFittedData.isDefined &&
           model.getEquation.isDefined)
   // image size
-  val size = (500, 500)
+  val size = (sizex.getOrElse(500), sizey.getOrElse(500))
   
   // margin
   val margin = 0.10
@@ -205,8 +218,5 @@ class Drawing (val model: Model)
   
   g.dispose()
   
-  javax.imageio.ImageIO.write(canvas, 
-                              "png", 
-                              new java.io.File("drawing.png"))
   
 }

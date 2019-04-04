@@ -262,7 +262,20 @@ class UnitTests {
                                                       Array(-1.0, 2.0, 4.0))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
-    val kuva = new Drawing(olsModel)    
+    val kuva = new Drawing(  olsModel, 
+                             None, 
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None
+                           )    
     assertTrue(
       "The smallest x value should be -1.0, it is: " + kuva.minX +
       "\nThe largest x value should be 3.0, it is: " +kuva.maxX +

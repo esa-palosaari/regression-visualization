@@ -18,12 +18,50 @@ class Engine {
     
   }
   
-  def fitOLSModel(dataToFit: Data) = models += new OLSModel(dataToFit)
-  
-  def fitLogModel(dataToFit: Data) = models += new LogModel(dataToFit)
-  
-  def saveImage(image: Drawing, fileName: String) 
+  def fitModel(modelType: String, dataToFit: Data) =
   {
-    
+    modelType match 
+    {
+      case _ => models += new OLSModel(dataToFit)
+    }
+  }
+  
+  def drawImage(  model: Model,
+                  sizex: Option[Int],
+                  sizey: Option[Int],
+                  xmax: Option[Int],
+                  xmin: Option[Int],
+                  ymax: Option[Int],
+                  ymin: Option[Int],
+                  pR: Option[Int],
+                  pB: Option[Int],
+                  pG: Option[Int],
+                  cR: Option[Int],
+                  cB: Option[Int],
+                  cG: Option[Int]
+                ) = 
+  {
+     visuals += new Drawing(  model, 
+                              sizex,
+                              sizey,
+                              xmax,
+                              xmin,
+                              ymax,
+                              ymin,
+                              pR,
+                              pB,
+                              pG,
+                              cR,
+                              cB,
+                              cG
+                           )
+  }
+  
+  def saveImage(image: Drawing, fileName: String) =
+  {
+    javax.imageio.ImageIO.write(  image.canvas, 
+                                  "png", 
+                                  new java.io.File(fileName)
+                               )
   }
 }

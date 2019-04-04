@@ -16,13 +16,14 @@ object CLIApp {
       This app creats a visualisation of a regression model fitted to data.
       Data and output file names are required, the rest are optional.
       
-      Usage: cliapp --d [dataFileName.csv|.xml] --o [outputFileName.png] 
+      Usage: cliapp --d [path\to\dataFileName.csv|.xml] --o [path\to\outputFileName.png] 
                       --modeltype [normal | log]
+                      --sizex [image size, horizontal] --sizey [image size, vertical]
                       --xmax [max_x-axis_value] --xmin [min_x-axis_value] 
                       --ymax [max_y-axis_value] --ymin [min_y-axis_value]
-                      --pointColorR [Red: 0-255] --pointColorB [Blue: 0-255]  
-                      --pointColorG [Green: 0-255] --curveColorR [Red: 0-255]
-                      --curveColorB [Blue: 0-255] --curveColorG [Green: 0-255]
+                      --pR [data point Red: 0-255] --pB [data point Blue: 0-255]  
+                      --pG [data point Green: 0-255] --cR [regression curve Red: 0-255]
+                      --cB [regression curve Blue: 0-255] --cG [regression curve Green: 0-255]
     """
   val engine = new Engine
   type OptionMap = Map[Symbol, Any]
@@ -35,10 +36,12 @@ object CLIApp {
     var dataFilename = ""
     var imageFilename = ""
     var modelType = ""
-    var xmax: Option[Double] = None
-    var xmin: Option[Double] = None
-    var ymax: Option[Double] = None
-    var ymin: Option[Double] = None
+    var sizex: Option[Int] = None
+    var sizey: Option[Int] = None
+    var xmax: Option[Int] = None
+    var xmin: Option[Int] = None
+    var ymax: Option[Int] = None
+    var ymin: Option[Int] = None
     var pointColorR: Option[Int] = None
     var pointColorB: Option[Int] = None
     var pointColorG: Option[Int] = None
@@ -51,18 +54,50 @@ object CLIApp {
      */
     args.sliding(2, 2).toList.collect 
     {
-      case Array("--pointColorR", pointR: String) => pointColorR = Some(pointR.toInt) 
-      case Array("--pointColorB", pointB: String) => pointColorB = Some(pointB.toInt) 
-      case Array("--pointColorG", pointG: String) => pointColorG = Some(pointG.toInt) 
-      case Array("--curveColorR", curveR: String) => curveColorR = Some(curveR.toInt) 
-      case Array("--curveColorB", curveB: String) => curveColorB = Some(curveB.toInt) 
-      case Array("--curveColorG", curveG: String) => curveColorG = Some(curveG.toInt) 
+      case Array("--sizex", imageX: String) => sizex = Some(imageX.toInt)
+      case Array("--sizey", imageY: String) => sizey = Some(imageY.toInt)
+      case Array("--pR", pointR: String) => 
+        {
+          require(pointR.toInt < 256 && pointR.toInt >= 0, 
+                  "RBG values are 0-255")
+          pointColorR = Some(pointR.toInt) 
+        }
+      case Array("--pB", pointB: String) => 
+        {
+          require(pointB.toInt < 256 && pointB.toInt >= 0, 
+                "RBG values are 0-255")
+          pointColorB = Some(pointB.toInt) 
+        }
+      case Array("--pG", pointG: String) => 
+        {
+          require(pointG.toInt < 256 && pointG.toInt >= 0, 
+                  "RBG values are 0-255")          
+          pointColorG = Some(pointG.toInt) 
+        }
+      case Array("--cR", curveR: String) => 
+        {
+          require(curveR.toInt < 256 && curveR.toInt >= 0, 
+                  "RBG values are 0-255")          
+          curveColorR = Some(curveR.toInt) 
+        }
+      case Array("--cB", curveB: String) => 
+        {
+          require(curveB.toInt < 256 && curveB.toInt >= 0, 
+                  "RBG values are 0-255")
+          curveColorB = Some(curveB.toInt) 
+        }
+      case Array("--cG", curveG: String) => 
+        {
+          require(curveG.toInt < 256 && curveG.toInt >= 0, 
+                  "RBG values are 0-255")
+          curveColorG = Some(curveG.toInt) 
+        }
       case Array("--modeltype", "normal") => modelType = "normal"
       case Array("--modeltype", "log") => modelType = "log"
-      case Array("--xmax", xmaxValue: String) => xmax = Some(xmaxValue.toDouble)
-      case Array("--xmin", xminValue: String) => xmin = Some(xminValue.toDouble)
-      case Array("--ymax", ymaxValue: String) => ymax = Some(ymaxValue.toDouble)
-      case Array("--ymin", yminValue: String) => ymin = Some(yminValue.toDouble)
+      case Array("--xmax", xmaxValue: String) => xmax = Some(xmaxValue.toInt)
+      case Array("--xmin", xminValue: String) => xmin = Some(xminValue.toInt)
+      case Array("--ymax", ymaxValue: String) => ymax = Some(ymaxValue.toInt)
+      case Array("--ymin", yminValue: String) => ymin = Some(yminValue.toInt)
       case Array("--d", dname: String) => dataFilename = dname
       case Array("--o", iname: String) => imageFilename = iname
       case _ => println("Could not parse all options.\n" + usage)
@@ -79,20 +114,45 @@ object CLIApp {
     if(!dataFilename.equals("")) 
     {
       engine.readData(dataFilename)  
-    } else println("Please give the name of the data file.")
+    } 
+    else 
+    {
+      println("Please give the name of the data file.")
+      System.exit(1)
+    }
     
     /* 
      * TODO: Toteuta vähintään yksi regressiomenetelmä yksinkertaisen 
      * lineaariregression lisäksi. (Joko molemmat yhtälöt, tai 
      * ensimmäinen yhtälö sekä itse valitsemasi muu menetelmä)
      */
-    
+     engine.fitModel(modelType, engine.data(0))
+      
     /*
      * Ohjelman tulee tehdä kuvaaja alkuperäisistä datapisteistä 
      * sekä niihin sovitetusta mallista. Käyttäjä pystyy 
      * säätämään kuvaajan asetuksia, esimerkiksi akselien 
      * päätepisteitä.
      */
+     engine.drawImage(  engine.models(0),
+                        sizex,
+                        sizey,
+                        xmax,
+                        xmin,
+                        ymax,
+                        ymin,
+                        pointColorR,
+                        pointColorB,
+                        pointColorG,
+                        curveColorR,
+                        curveColorB,
+                        curveColorG
+                      )
+     
+    if(imageFilename.equals(""))
+      engine.saveImage(engine.visuals(0), "image.png")
+    else
+      engine.saveImage(engine.visuals(0), imageFilename)
     
     (dataFilename, imageFilename)
 
