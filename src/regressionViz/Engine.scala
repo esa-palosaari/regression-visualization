@@ -22,7 +22,12 @@ class Engine {
   {
     modelType match 
     {
-      case _ => models += new OLSModel(dataToFit)
+      case _ => 
+        {
+          val unfitModel = new OLSModel(dataToFit)
+          unfitModel.fitData
+          models += unfitModel
+        }
     }
   }
   
