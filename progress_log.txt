@@ -1,4 +1,52 @@
-25.3.
+8.4.
+*** Viikot 13-14 ***
+*Muutaman rivin kuvauksen mitä luokkia on lisätty tai päivitetty ja mitä 
+toimintoja niissä on saatu toteutettua (vaikka olisi keskenkin)
+
+Lisätyt luokat ja toiminnot:
+- CSVReader.scala
+    1. Osaa lukea tiedostoja joissa numerot erotetaan pilkuilla
+    2. readData() tekee ja palauttaa luetuista tiedoista Data-objektin
+- Engine.scala
+    1. Toiminnot csv-tiedoston lukemiseksi Data-objektiksi, mallin 
+    sovittamiseksi dataan, visualisoinnin tuottamiseksi ja sen tallentamiseksi
+    png-tiedostoon. 
+- CLIApp.scala
+    1. Osaa lukea komentoriviparametrit oikein.
+    2. Käyttää Engine-oliota toteuttamaan komentoriviparametrien mukaiset
+    toiminnot
+- Drawing.scala
+    1. Konstruktori ottaa monta parametria, joilla voidaan säätää kuvaa
+    halutunlaiseksi
+
+*Mitä metodeja / toiminnallisuuksia on saatu testattua ko. luokissa, että ne 
+toimivat oikein?
+
+- Yksinkertainen testi CLIAppin parametrien lukemiselle, joka pitänee poistaa.
+- CLIAppin toimimisen testausta komentoriviltä kokeilemalla.
+
+*Mitä mahdollisia hankalia virheitä on esiintynyt ja onko niitä saatu 
+ratkaistua?
+
+- Hankalaa oli saada useamman luokan Scala-koodista komentorivillä toimivaa 
+ohjelmaa. Google auttoi asiassa, mutta mistään ei löytynyt koottuja ohjeita.
+- Hankala virhe on koordinaatiston meneminen vinksalleen Drawing-oliossa,
+kun parametriksi annetaan erilaisia x- ja y-akselien ääripäitä. En ole vielä
+ratkaissut asiaa.
+
+*Mikä on käytetty työmäärä tänä aikana 5 tunnin tarkkuudella
+Ehkä 20
+
+*Oletko edellä vai jäljessä projektisuunnitelmassa arvioimaasi tilannetta suurin 
+piirtein tässä vaiheessa
+
+Jäljellä noin kaksi viikkoa. Alkuperäisen suunnitelman mukaan graafinen käyttö-
+liittymä tulisi olla nyt jo valmis, mutta en ole vielä saanut sitä aloitettua.
+Puuttuvat myös: toinen datatiedostomuoto ja toinen regressiomalli. Kiirettä
+tulee olemaan, kun tällä ja ensi viikolla on tenttejä ja vielä hiihtomatka juuri
+dediksen aikaan.
+
+25.3. 
 *** Viikot 11-12 ***
 *Muutaman rivin kuvauksen mitä luokkia on lisätty tai päivitetty ja mitä 
 toimintoja niissä on saatu toteutettua (vaikka olisi keskenkin)
