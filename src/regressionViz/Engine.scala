@@ -22,6 +22,7 @@ class Engine {
   {
     modelType match 
     {
+      case "log" => println("log model missing")
       case _ => 
         {
           val unfitModel = new OLSModel(dataToFit)
