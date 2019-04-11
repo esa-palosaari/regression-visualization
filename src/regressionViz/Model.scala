@@ -18,6 +18,7 @@ abstract class Model (data: Data)
   def getResiduals: Option[Array[Double]] = residuals
   def getFittedData: Option[Data] = fittedData  
   def getY(x: Double): Double
+  // TODO: a maximum and minimum Y for non-linear models?
   def fitData: Unit
   
   def checkAndDeleteMissingRows = 

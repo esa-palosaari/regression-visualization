@@ -102,7 +102,7 @@ class Drawing (  val model: Model,
                            )
   )
          
-  // draw x- and y-axes *if* visible
+  // draw Cartesian x- and y-axes from origin, may not be visible
   g.setColor(Color.GRAY)
   // y-axis
   g.draw(new Line2D.Double(
@@ -137,10 +137,10 @@ class Drawing (  val model: Model,
   // get the rounded end points 
   // TODO: check whether x-ticks and y-ticks are same order
   // TODO: Check again how to transform to different orders
-  val smallestTickX = ((minX.ceil.toInt + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
-  val largestTickX = ((maxX.floor.toInt + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
-  val smallestTickY = ((minY.ceil.toInt + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
-  val largestTickY = ((maxY.ceil.toInt + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
+  val smallestTickX = ((minX + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
+  val largestTickX = ((maxX + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
+  val smallestTickY = ((minY + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
+  val largestTickY = ((maxY + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
 
   // write the numbers from the smallest to the largest
   // how many ticks smaller is maX than the image boundary? TODO: check if extraTick works with negative maxX
@@ -194,8 +194,8 @@ class Drawing (  val model: Model,
               )
   // draw data points
   g.setColor(new Color( pointColorR.getOrElse(255),
-                        pointColorB.getOrElse(0),
-                        pointColorG.getOrElse(0)
+                        pointColorG.getOrElse(0),
+                        pointColorB.getOrElse(0)
                       )
              )
   (points(0) zip points.last).map(
@@ -211,8 +211,8 @@ class Drawing (  val model: Model,
                                    
   // draw the regression line
   g.setColor(new Color( curveColorR.getOrElse(0),
-                        curveColorB.getOrElse(255),
-                        curveColorG.getOrElse(0)
+                        curveColorG.getOrElse(0),
+                        curveColorB.getOrElse(255)
                       )
             )
   g.draw(new Line2D.Double(

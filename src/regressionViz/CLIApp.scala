@@ -6,7 +6,7 @@
  *  How to run the jar file:
  *  Install scala 2.12.3
  *  Install java 8 or later
- *  scala -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:regressionVizPack.jar" regressionViz.CLIApp [options]   
+ *  scala -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:regressionViz.jar" regressionViz.CLIApp [options]   
  */
 package regressionViz
 import java.awt.Color
@@ -25,6 +25,7 @@ object CLIApp {
                       --pG [data point Green: 0-255] --cR [regression curve Red: 0-255]
                       --cB [regression curve Blue: 0-255] --cG [regression curve Green: 0-255]
     """
+  // TODO: Add variable names.
   val engine = new Engine
   type OptionMap = Map[Symbol, Any]
   
