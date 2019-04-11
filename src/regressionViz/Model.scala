@@ -17,7 +17,7 @@ abstract class Model (data: Data)
   def getEquation: Option[Array[Double]] = equation
   def getResiduals: Option[Array[Double]] = residuals
   def getFittedData: Option[Data] = fittedData  
-  
+  def getY(x: Double): Double
   def fitData: Unit
   
   def checkAndDeleteMissingRows = 

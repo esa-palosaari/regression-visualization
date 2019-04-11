@@ -55,31 +55,31 @@ class Drawing (  val model: Model,
   val minX: Int = xmin.getOrElse(x.min.toInt)
   val maxY: Int = ymax.getOrElse(
                                   max(y.max.toInt, 
-                                      max(model.getEquation.get(0)+
-                                          model.getEquation.get(1)*maxX,
-                                          model.getEquation.get(0)+
-                                          model.getEquation.get(1)*minX
+                                      max(model.getY(maxX),
+                                          model.getY(minX)
                                          ).toInt
                                      )
-                                  )
+                                 )
   val minY: Int = ymin.getOrElse(
                                     min(y.min.toInt, 
-                                        min(model.getEquation.get(0)+
-                                            model.getEquation.get(1)*maxX,
-                                            model.getEquation.get(0)+
-                                            model.getEquation.get(1)*minX
+                                        min(model.getY(maxX),
+                                            model.getY(minX)
                                            ).toInt
                                         )
                                  )
                                  
   val xHeight = size._2*(1.0- margin)
+  val xLeftWidth = size._1*margin
+  val xRightWidth = size._1*(1.0-margin)
   val yWidth = size._1*margin
+  val yHiHeight = size._2*margin
+  val yLoHeight = size._2*(1.0-margin)
   
   val axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2.0)))/
-                         max(abs(maxX.toInt-minX.toInt),abs(minX.toInt-maxX.toInt))).floor.toInt
+                         max(abs(maxX-minX),abs(minX-maxX))).floor.toInt
     
   val axisYUnit: Int = (size._2.toDouble*(1.0-(margin*2.0))/
-                        max(abs(maxY.toInt-minY.toInt), abs(minY.toInt-maxY.toInt))).floor.toInt
+                        max(abs(maxY-minY), abs(minY-maxY))).floor.toInt
                         
   val axisUnit: Int = min(axisXUnit, axisYUnit)
 
@@ -88,36 +88,36 @@ class Drawing (  val model: Model,
   g.setStroke(new BasicStroke())
   g.setColor(new Color(0,0,0)) // set to black
   g.draw(new Line2D.Double(
-                             margin*size._1, 
+                             xLeftWidth,
                              xHeight, 
-                             (1.0-margin)*size._1, 
+                             xRightWidth,
                              xHeight
                           )
   )
   g.draw(new Line2D.Double(
                               yWidth, 
-                              margin*size._2, 
+                              yHiHeight, 
                               yWidth, 
-                              (1.0-margin)*size._2
+                              yLoHeight
                            )
   )
          
-  // draw x- and y-axes if visible
+  // draw x- and y-axes *if* visible
   g.setColor(Color.GRAY)
   // y-axis
   g.draw(new Line2D.Double(
-                            margin*size._1 - axisUnit*minX,                        
-                            margin*size._2,
-                            margin*size._1 - axisUnit*minX,                        
-                            (1.0-margin)*size._2
+                            yWidth - axisUnit*minX,                        
+                            yHiHeight,
+                            yWidth - axisUnit*minX,                        
+                            yLoHeight
                            )
   )
   // x-axis
   g.draw(new Line2D.Double(
-                             margin*size._1,
-                             (1.0-margin)*size._2 + axisUnit*minY,
-                             (1.0-margin)*size._1,
-                             (1.0-margin)*size._2 + axisUnit*minY
+                             xLeftWidth,
+                             xHeight + axisUnit*minY,
+                             xRightWidth,
+                             xHeight + axisUnit*minY
                            )
   )
   

@@ -23,6 +23,12 @@ class OLSModel (data: Data) extends Model (data)
     calculateResiduals
   }
   
+  def getY(x: Double): Double = 
+  {
+    require(equation.isDefined)
+    equation.get(0) + equation.get(1)*x
+  }
+  
   protected def calculateNormalEquation =
   {
     // add the intercept to the equation (i.e. column of ones)
