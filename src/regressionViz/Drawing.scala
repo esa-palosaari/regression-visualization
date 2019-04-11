@@ -104,7 +104,7 @@ class Drawing (  val model: Model,
          
   // draw Cartesian x- and y-axes from origin, may not be visible
   g.setColor(Color.GRAY)
-  // y-axis
+  // y-axis from origin
   g.draw(new Line2D.Double(
                             yWidth - axisUnit*minX,                        
                             yHiHeight,
@@ -112,7 +112,7 @@ class Drawing (  val model: Model,
                             yLoHeight
                            )
   )
-  // x-axis
+  // x-axis from origin
   g.draw(new Line2D.Double(
                              xLeftWidth,
                              xHeight + axisUnit*minY,
@@ -142,6 +142,7 @@ class Drawing (  val model: Model,
   val smallestTickY = ((minY + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
   val largestTickY = ((maxY + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
 
+  
   // write the numbers from the smallest to the largest
   // how many ticks smaller is maX than the image boundary? TODO: check if extraTick works with negative maxX
   val extraTicksX = ((size._1.toDouble*(1.0-(2*margin)) - abs(maxX)*axisUnit).toInt/

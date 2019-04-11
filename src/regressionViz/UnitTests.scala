@@ -300,7 +300,7 @@ class UnitTests {
   @Test def CSVReader_should_return_correct_data ()
   {
     val reader = new CSVReader
-    val data: Option[Data] = reader.readFile("testi.csv")
+    val data: Option[Data] = reader.readFile("testIO/testi.csv")
     assertTrue(
       "Instead of 1.0, (0,0) was: " + data.get.getPoints.get(0)(0),
       data.get.getPoints.get(0)(0) == 1.0 && 
@@ -312,16 +312,32 @@ class UnitTests {
     )
   }
   
-  @Test def CLIApp_parses_filenames_correctly ()
+  @Test def Drawing_has_correct_orders_of_magnitude ()
   {
-    type OptionMap = Map[Symbol, Any]
-    val testapp = CLIApp
-    val (datafname, imagefname) = testapp.main(Array("--o", "image.png", "--d", "data.csv", "test"))
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(-101.0, 2.0, 3.0), 
+                                                      Array(-1.0, 2.0, 4.0))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    val kuva = new Drawing(  olsModel, 
+                             None, 
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None
+                           )    
     assertTrue(
-        "Datafile is: " + datafname + 
-        "\nImagefile is. " + imagefname,
-      datafname.equals("data.csv") &&
-      imagefname.equals("image.png")
+      "orderX should be 2, it is: " + kuva.orderX +
+      "\norderY should be 0, it is: " + kuva.orderY ,
+      kuva.orderX == 2 &&
+      kuva.orderY == 0
     )
   }
   
