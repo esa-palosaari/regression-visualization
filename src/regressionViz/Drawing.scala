@@ -161,25 +161,21 @@ class Drawing (  val model: Model,
   )
   
   // write numbers on x- and y-axes
-  g.setFont(new Font("Arial", Font.PLAIN, 12))
-//  g.drawString(0.toString, (margin*size._1 - axisUnit*minX).toInt, ((1-0.7*margin)*size._2).toInt)
-//  g.drawString(0.toString, (0.7*margin*size._1).toInt, ((1.0-0.7*margin)*size._2 + axisUnit*minY).toInt)
-
-                   
+  g.setFont(new Font("Arial", Font.PLAIN, 12))        
   // write the tick numbers on the plot axes
   // numbers to x-axis
-  var index = largestTickX + extraTicksX //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
+  var index = largestTickX + extraTicksX 
   while (index >= smallestTickX)
   {
     g.drawString(  
                   index.toInt.toString, 
-                  (xLeftWidth  + ((index-smallestTickX)*axisUnit)).toInt, // + abs(extraTicksX)*axisUnit
+                  (xLeftWidth  + ((index-smallestTickX)*axisUnit)).toInt, 
                   ((1-0.7*margin)*size._2).toInt
                 )
     index -= orderX
   }
   // numbers to y-axis  
-  index = largestTickY + extraTicksY //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
+  index = largestTickY + extraTicksY 
   while (index >= smallestTickY)
   {
     g.drawString(  
@@ -234,17 +230,32 @@ class Drawing (  val model: Model,
                         curveColorB.getOrElse(255)
                       )
             )
-  g.draw(new Line2D.Double(
-                             margin*size._1,
-                             size._2*(1.0-margin) - axisUnit*(model.getEquation.get(0) +
-                                                              model.getEquation.get(1)*minX - 
-                                                              smallestTickY),
-                             abs(largestTickX-smallestTickX)*axisUnit + margin*size._1,
-                             size._2*(1.0-margin) - axisUnit*(model.getEquation.get(0)+
-                                                              model.getEquation.get(1)*maxX - 
-                                                              smallestTickY)
-                          )
-  )
+       
+  var xIndex = smallestTickX          
+  while(xIndex <= (largestTickX + extraTicksX))
+  {
+    val point1Xcoord = yWidth + (xIndex - smallestTickX)*axisUnit
+    val point1Ycoord = xHeight - axisUnit*(model.getY(xIndex) - smallestTickY)
+    val point2Xcoord = (xIndex+1-smallestTickX)*axisUnit + yWidth
+    val point2Ycoord = xHeight - axisUnit*(model.getY(xIndex+1)- smallestTickY)
+    if(point1Ycoord < yLoHeight && 
+       point2Ycoord < yLoHeight && 
+       point1Ycoord > yHiHeight &&
+       point2Ycoord > yHiHeight &&
+       point1Xcoord < xRightWidth)
+    {
+        g.draw(new Line2D.Double(
+                                 point1Xcoord,
+                                 point1Ycoord,
+                                 point2Xcoord,
+                                 point2Ycoord
+                                )
+        ) 
+    }
+    xIndex += 1
+  }
+  
+
   
   // TODO: write the regression equation
   
