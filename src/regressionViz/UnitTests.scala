@@ -336,9 +336,15 @@ class UnitTests {
                            )    
     assertTrue(
       "smallestTickX should be -2, it is: " + kuva.smallestTickX +
-      "\nlargestTickX should be 5, it is: " + kuva.largestTickX,
-      kuva.smallestTickX == -2 &&
-      kuva.largestTickX == 5
+      "\nlargestTickX should be 5, it is: " + kuva.largestTickX +
+      "\nlargestTickY should be 10, it is: " + kuva.largestTickY +
+      "\nsmallestTickY should be -10, it is: " + kuva.smallestTickY +
+      "\norderY is: " + kuva.orderY,
+      
+      kuva.smallestTickX.toInt == -2 &&
+      kuva.largestTickX.toInt == 5 &&
+      kuva.largestTickY.toInt == 20 &&
+      kuva.smallestTickY.toInt == -10
     )
   }  
 }

@@ -132,12 +132,12 @@ class Drawing (  val model: Model,
   val numberOfUnitsY = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
 
   // get the order of the variable values
-  var orderMaxX = abs(roundToMagnitude(maxX))
-  var orderMinX = abs(roundToMagnitude(minX))
-  var orderMaxY = abs(roundToMagnitude(maxY))
-  var orderMinY = abs(roundToMagnitude(minY))
-  var orderX = max(orderMaxX, orderMinX)
-  var orderY = max(orderMaxY, orderMinY)
+  val orderMaxX = abs(roundToMagnitude(maxX))
+  val orderMinX = abs(roundToMagnitude(minX))
+  val orderMaxY = abs(roundToMagnitude(maxY))
+  val orderMinY = abs(roundToMagnitude(minY))
+  val orderX = max(orderMaxX, orderMinX)
+  val orderY = max(orderMaxY, orderMinY)
   
   // from https://stackoverflow.com/questions/7906996/algorithm-to-round-to-the-next-order-of-magnitude-in-r
   def roundToMagnitude(n: Double): Double =
@@ -150,10 +150,10 @@ class Drawing (  val model: Model,
     if (negative) return -rounded else return rounded
   }
   // get the rounded end points 
-  val smallestTickX = (minX/orderX).toInt - orderX
-  val largestTickX = (maxX/orderX).toInt + orderX
-  val smallestTickY = (minY/orderY).toInt - orderY
-  val largestTickY = (maxY/orderY).toInt + orderY
+  val smallestTickX = (minX/orderX).toInt*orderX - orderX
+  val largestTickX = (maxX/orderX).toInt*orderX + orderX
+  val smallestTickY = (minY/orderY).toInt*orderY - orderY
+  val largestTickY = (maxY/orderY).toInt*orderY + orderY
   
   // write the numbers from the smallest to the largest
   // how many ticks smaller is maX than the image boundary? 
