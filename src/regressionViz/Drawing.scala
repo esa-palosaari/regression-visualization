@@ -132,19 +132,32 @@ class Drawing (  val model: Model,
   val numberOfUnitsY = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
 
   // get the order of the variable values
-  var orderX = max(log10(abs(maxX)).floor.toInt, log10(abs(minX)).floor.toInt)
-  var orderY = max(log10(abs(maxY)).floor.toInt, log10(abs(minY)).floor.toInt)
+  var orderMaxX = abs(roundToMagnitude(maxX))
+  var orderMinX = abs(roundToMagnitude(minX))
+  var orderMaxY = abs(roundToMagnitude(maxY))
+  var orderMinY = abs(roundToMagnitude(minY))
+  var orderX = max(orderMaxX, orderMinX)
+  var orderY = max(orderMaxY, orderMinY)
+  
+  // from https://stackoverflow.com/questions/7906996/algorithm-to-round-to-the-next-order-of-magnitude-in-r
+  def roundToMagnitude(n: Double): Double =
+  {
+    if (n == 0) return 1
+    val negative: Boolean = n < 0
+    val logarithm = log10(abs(n))
+    val decimalPlaces = logarithm.floor
+    val rounded = pow(10, decimalPlaces)
+    if (negative) return -rounded else return rounded
+  }
   // get the rounded end points 
-  // TODO: check whether x-ticks and y-ticks are same order
-  // TODO: Check again how to transform to different orders
-  val smallestTickX = ((minX + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
-  val largestTickX = ((maxX + pow(10,orderX)/2)/pow(10,orderX))*pow(10,orderX)
-  val smallestTickY = ((minY + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
-  val largestTickY = ((maxY + pow(10,orderY)/2)/pow(10,orderY))*pow(10,orderY)
-
+  val smallestTickX = (minX/orderX).toInt - orderX
+  val largestTickX = (maxX/orderX).toInt + orderX
+  val smallestTickY = (minY/orderY).toInt - orderY
+  val largestTickY = (maxY/orderY).toInt + orderY
   
   // write the numbers from the smallest to the largest
-  // how many ticks smaller is maX than the image boundary? TODO: check if extraTick works with negative maxX
+  // how many ticks smaller is maX than the image boundary? 
+  // TODO: check if extraTick works with negative maxX
   val extraTicksX = ((size._1.toDouble*(1.0-(2*margin)) - abs(maxX)*axisUnit).toInt/
                       axisUnit).toInt
 
@@ -156,7 +169,7 @@ class Drawing (  val model: Model,
   {
     g.drawString(  
                   index.toString, 
-                  (margin*size._1  + (1+ index*pow(10,orderX))*axisUnit).toInt, // + abs(extraTicksX)*axisUnit
+                  (xLeftWidth  + (1+ index*pow(10,orderX))*axisUnit).toInt, // + abs(extraTicksX)*axisUnit
                   ((1-0.7*margin)*size._2).toInt
                 )
     index -= pow(10,orderX).toInt

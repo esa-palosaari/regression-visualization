@@ -297,6 +297,7 @@ class UnitTests {
       data.isEmpty
     )
   }
+  
   @Test def CSVReader_should_return_correct_data ()
   {
     val reader = new CSVReader
@@ -312,11 +313,11 @@ class UnitTests {
     )
   }
   
-  @Test def Drawing_has_correct_orders_of_magnitude ()
+  @Test def Drawing_has_correct_orders_of_ticks ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(-101.0, 2.0, 3.0), 
-                                                      Array(-1.0, 2.0, 4.0))))
+    someData.initializeDataset(newPoints = Some(Array(Array(-1.0, 2.0, 4.0), 
+                                                      Array(10.0, 6.3, 2.5))))
     val olsModel = new OLSModel(someData)
     olsModel.fitData
     val kuva = new Drawing(  olsModel, 
@@ -334,11 +335,10 @@ class UnitTests {
                              None
                            )    
     assertTrue(
-      "orderX should be 2, it is: " + kuva.orderX +
-      "\norderY should be 0, it is: " + kuva.orderY ,
-      kuva.orderX == 2 &&
-      kuva.orderY == 0
+      "smallestTickX should be -2, it is: " + kuva.smallestTickX +
+      "\nlargestTickX should be 5, it is: " + kuva.largestTickX,
+      kuva.smallestTickX == -2 &&
+      kuva.largestTickX == 5
     )
-  }
-  
+  }  
 }
