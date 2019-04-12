@@ -31,6 +31,10 @@ class Drawing (  val model: Model,
   // margin
   val margin = 0.10
   
+  // plot size X and Y direction
+  val plotSizeX = size._1.toDouble*(1.0-(margin*2.0))
+  val plotSizeY = size._2.toDouble*(1.0-(2*margin))
+  
   // canvas to draw on 
   val canvas = new BufferedImage(size._1, size._2,
                                  BufferedImage.TYPE_INT_RGB)
@@ -75,14 +79,49 @@ class Drawing (  val model: Model,
   val yHiHeight = size._2*margin
   val yLoHeight = size._2*(1.0-margin)
   
-  val axisXUnit: Int = ((size._1.toDouble*(1.0-(margin*2.0)))/
-                         max(abs(maxX-minX),abs(minX-maxX))).floor.toInt
-    
-  val axisYUnit: Int = (size._2.toDouble*(1.0-(margin*2.0))/
-                        max(abs(maxY-minY), abs(minY-maxY))).floor.toInt
-                        
-  val axisUnit: Int = min(axisXUnit, axisYUnit)
 
+  // get the order of the variable values
+  val orderMaxX = abs(roundToMagnitude(maxX))
+  val orderMinX = abs(roundToMagnitude(minX))
+  val orderMaxY = abs(roundToMagnitude(maxY))
+  val orderMinY = abs(roundToMagnitude(minY))
+  val orderX = max(orderMaxX, orderMinX)
+  val orderY = max(orderMaxY, orderMinY)
+  
+  // from https://stackoverflow.com/questions/7906996/algorithm-to-round-to-the-next-order-of-magnitude-in-r
+  def roundToMagnitude(n: Double): Double =
+  {
+    if (n == 0) return 1
+    val negative: Boolean = n < 0
+    val logarithm = log10(abs(n))
+    val decimalPlaces = logarithm.floor
+    val rounded = pow(10, decimalPlaces)
+    if (negative) return -rounded else return rounded
+  }
+  
+  // get the rounded end points 
+  val smallestTickX = (minX/orderX).toInt*orderX - orderX
+  val largestTickX = (maxX/orderX).toInt*orderX + orderX
+  val smallestTickY = (minY/orderY).toInt*orderY - orderY
+  val largestTickY = (maxY/orderY).toInt*orderY + orderY
+     
+  
+  val axisXUnit = (plotSizeX/(abs(largestTickX-smallestTickX)))
+  val axisYUnit = (plotSizeY/(abs(largestTickY-smallestTickY)))
+  val axisUnit = min(axisXUnit, axisYUnit)
+
+  
+  // how many ticks smaller is max point or curve than the image boundary? 
+  val extraTicksX = ((plotSizeX - ((abs(minX - maxX)/orderX).toInt*orderX *axisUnit)/
+                      axisUnit))
+
+  val extraTicksY = ((plotSizeY - (abs(maxY - minY)/orderY).toInt*orderY*axisUnit)/
+                      axisUnit)  
+                      
+  // number of axisUnits that "fit" on the coordinate axes
+  val numberOfUnitsX = (plotSizeX/axisUnit).floor.toInt
+  val numberOfUnitsY = (plotSizeY/axisUnit).floor.toInt
+  
 
   // draw coordinate lines
   g.setStroke(new BasicStroke())
@@ -106,84 +145,49 @@ class Drawing (  val model: Model,
   g.setColor(Color.GRAY)
   // y-axis from origin
   g.draw(new Line2D.Double(
-                            yWidth - axisUnit*minX,                        
+                            yWidth - axisUnit*smallestTickX,                        
                             yHiHeight,
-                            yWidth - axisUnit*minX,                        
+                            yWidth - axisUnit*smallestTickX,                        
                             yLoHeight
-                           )
+                          )
   )
   // x-axis from origin
   g.draw(new Line2D.Double(
                              xLeftWidth,
-                             xHeight + axisUnit*minY,
+                             xHeight + axisUnit*smallestTickY,
                              xRightWidth,
-                             xHeight + axisUnit*minY
+                             xHeight + axisUnit*smallestTickY
                            )
   )
   
   // write numbers on x- and y-axes
   g.setFont(new Font("Arial", Font.PLAIN, 12))
-  // zeros, TODO: update writing 0 to handle cases where the origo is outside the screen?
 //  g.drawString(0.toString, (margin*size._1 - axisUnit*minX).toInt, ((1-0.7*margin)*size._2).toInt)
 //  g.drawString(0.toString, (0.7*margin*size._1).toInt, ((1.0-0.7*margin)*size._2 + axisUnit*minY).toInt)
 
-  // number of axisUnits that fit on the coordinate axes
-  val numberOfUnitsX = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
-  val numberOfUnitsY = ((size._1.toDouble*(1.0-(margin*2.0)))/axisUnit).floor.toInt
-
-  // get the order of the variable values
-  val orderMaxX = abs(roundToMagnitude(maxX))
-  val orderMinX = abs(roundToMagnitude(minX))
-  val orderMaxY = abs(roundToMagnitude(maxY))
-  val orderMinY = abs(roundToMagnitude(minY))
-  val orderX = max(orderMaxX, orderMinX)
-  val orderY = max(orderMaxY, orderMinY)
-  
-  // from https://stackoverflow.com/questions/7906996/algorithm-to-round-to-the-next-order-of-magnitude-in-r
-  def roundToMagnitude(n: Double): Double =
-  {
-    if (n == 0) return 1
-    val negative: Boolean = n < 0
-    val logarithm = log10(abs(n))
-    val decimalPlaces = logarithm.floor
-    val rounded = pow(10, decimalPlaces)
-    if (negative) return -rounded else return rounded
-  }
-  // get the rounded end points 
-  val smallestTickX = (minX/orderX).toInt*orderX - orderX
-  val largestTickX = (maxX/orderX).toInt*orderX + orderX
-  val smallestTickY = (minY/orderY).toInt*orderY - orderY
-  val largestTickY = (maxY/orderY).toInt*orderY + orderY
-  
-  // write the numbers from the smallest to the largest
-  // how many ticks smaller is maX than the image boundary? 
-  // TODO: check if extraTick works with negative maxX
-  val extraTicksX = ((size._1.toDouble*(1.0-(2*margin)) - abs(maxX)*axisUnit).toInt/
-                      axisUnit).toInt
-
-  val extraTicksY = ((size._2.toDouble*(1.0-(2*margin)) - abs(maxY)*axisUnit).toInt/
-                      axisUnit).toInt                      
-  // x-axis
-  var index = largestTickX.toInt + extraTicksX.toInt //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
-  while (index >= minX)
+                   
+  // write the tick numbers on the plot axes
+  // numbers to x-axis
+  var index = largestTickX + extraTicksX //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
+  while (index >= smallestTickX)
   {
     g.drawString(  
-                  index.toString, 
-                  (xLeftWidth  + (1+ index*pow(10,orderX))*axisUnit).toInt, // + abs(extraTicksX)*axisUnit
+                  index.toInt.toString, 
+                  (xLeftWidth  + ((index-smallestTickX)*axisUnit)).toInt, // + abs(extraTicksX)*axisUnit
                   ((1-0.7*margin)*size._2).toInt
                 )
-    index -= pow(10,orderX).toInt
+    index -= orderX
   }
-  // y-axis  
-  index = largestTickY.toInt + extraTicksY.toInt //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
-  while (index >= minY)
+  // numbers to y-axis  
+  index = largestTickY + extraTicksY //+ pow(10, orderX))/2)/pow(10, orderX))*pow(10, orderX).toInt
+  while (index >= smallestTickY)
   {
     g.drawString(  
-                  index.toString, 
-                  (0.7*margin*size._1).toInt, 
-                  ((1.0-margin)*size._2  - (1+ index*pow(10,orderY))*axisUnit).toInt
+                  index.toInt.toString, 
+                  (0.4*yWidth).toInt, 
+                  (yLoHeight - (index-smallestTickY)*axisUnit).toInt
                 )
-    index -= pow(10,orderY).toInt
+    index -= orderY
   }  
   
 
@@ -194,6 +198,7 @@ class Drawing (  val model: Model,
                  size._1/2, 
                  ((1.0-0.3*margin)*size._2).toInt
               )
+              
   // rotate string
   // https://stackoverflow.com/questions/10083913/how-to-rotate-text-with-graphics2d-in-java
   var transformation: AffineTransform = new AffineTransform()
@@ -215,15 +220,15 @@ class Drawing (  val model: Model,
   (points(0) zip points.last).map(
                                     x => g.fill(
                                                  new Ellipse2D.Double(
-                                                   (size._1*margin) + (x._1-minX)*axisUnit, 
-                                                   (size._2*(1.0-margin)) - (x._2-minY)*axisUnit,
+                                                   xLeftWidth + (x._1-smallestTickX)*axisUnit, 
+                                                   xHeight - (x._2-smallestTickY)*axisUnit,
                                                    5.0, // size
                                                    5.0 // size   
                                                  )
                                                ) 
                                    )
                                    
-  // draw the regression line
+  // draw the regression curve
   g.setColor(new Color( curveColorR.getOrElse(0),
                         curveColorG.getOrElse(0),
                         curveColorB.getOrElse(255)
@@ -233,11 +238,11 @@ class Drawing (  val model: Model,
                              margin*size._1,
                              size._2*(1.0-margin) - axisUnit*(model.getEquation.get(0) +
                                                               model.getEquation.get(1)*minX - 
-                                                              minY),
-                             (maxX-minX)*axisUnit + margin*size._1,
+                                                              smallestTickY),
+                             abs(largestTickX-smallestTickX)*axisUnit + margin*size._1,
                              size._2*(1.0-margin) - axisUnit*(model.getEquation.get(0)+
                                                               model.getEquation.get(1)*maxX - 
-                                                              minY)
+                                                              smallestTickY)
                           )
   )
   
