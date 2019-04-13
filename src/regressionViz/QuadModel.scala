@@ -2,15 +2,21 @@ package regressionViz
 
 import scala.math._
 
-class OLSModel (data: Data) extends Model (data)
-{
+class QuadModel (data: Data) extends Model(data) {
 
-  val matrix = new ArrayMatrix //for matrix calculations
+  // get matrix functions
+  val matrix = new ArrayMatrix
   
+  def getY(x: Double): Double =
+  {
+    require(equation.isDefined)
+    equation.get(0) + equation.get(1)*x + equation.get(2)*pow(2, x)
+  }    
+  // TODO: a maximum and minimum Y for non-linear models?
   def fitData: Unit = 
   {
     // listwise deletion for missing values
-    if (fittedData.isEmpty) checkAndDeleteMissingRows
+    if (!fittedData.isEmpty) checkAndDeleteMissingRows
     
     // check that there are enough rows and columns
     // after deleting rows with missing values
@@ -25,17 +31,11 @@ class OLSModel (data: Data) extends Model (data)
     calculateResiduals
   }
   
-  def getY(x: Double): Double = 
-  {
-    require(equation.isDefined)
-    equation.get(0) + equation.get(1)*x
-  }
-  
   protected def calculateNormalEquation =
   {
     // add the intercept to the equation (i.e. column of ones)
     // take the last column out = outcome variable
-    val X: Array[Array[Double]] = 
+    val X: Array[Array[Double]] =
     {  
       val originalPoints = fittedData.get.getPoints.get
       val originalLength = originalPoints(0).length
@@ -71,6 +71,5 @@ class OLSModel (data: Data) extends Model (data)
     }
      
     residuals = Some(calculatedResiduals)
-  }
-  
+  }  
 }

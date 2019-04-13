@@ -199,15 +199,11 @@ class UnitTests {
     )
   }
   
-  @Test def OLSModel_invertMatrix_should_give_correct_matrix ()
+  @Test def ArrayMatrix_invertMatrix_should_give_correct_matrix ()
   {
-    val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 1.0), 
-                                                      Array(2.0, 1.0),
-                                                      Array(3.0, 4.0))))
-    val olsModel = new OLSModel(someData) 
+    val matrix = new ArrayMatrix
     val A: Array[Array[Double]] = Array(Array(3, 3.2), Array(3.5, 3.6))
-    val invertedMatrix: Array[Array[Double]] = olsModel.invertMatrix(A)
+    val invertedMatrix: Array[Array[Double]] = matrix.invertMatrix(A)
     assertTrue(
         "\nInstead of -9.0, A(0,0) is " + invertedMatrix(0)(0) +
         "\n instead of 8.0, A(0,1) is " + invertedMatrix(0)(1) +
@@ -220,16 +216,12 @@ class UnitTests {
     )
   }
   
-  @Test def OLSModel_multiplyMatrices_should_give_correct_answer ()
+  @Test def ArrayMatrix_multiplyMatrices_should_give_correct_answer ()
   {
-    val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(0.0, 1.0), 
-                                                      Array(2.0, 1.0),
-                                                      Array(3.0, 4.0))))
-    val olsModel = new OLSModel(someData) 
+    val matrix = new ArrayMatrix
     val A: Array[Array[Double]] = Array(Array(1, 1), Array(2, 2))
     val B: Array[Array[Double]] = Array(Array(1, 1), Array(2, 2), Array(3, 3))
-    val AB = olsModel.multiplyMatrices(A, B)
+    val AB = matrix.multiplyMatrices(A, B)
     assertTrue(
       AB(0)(0) == 3.0  
     )
@@ -255,7 +247,7 @@ class UnitTests {
     )
   }
     
-  @Test def Drawing_should_have_correct_maximum_and_minimum ()
+  @Test def Drawing_should_have_correct_maximum_and_minimum_x_and_y ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(-1.0, 2.0, 3.0), 
@@ -313,7 +305,7 @@ class UnitTests {
     )
   }
   
-  @Test def Drawing_has_correct_orders_of_ticks ()
+  @Test def Drawing_has_correct_min_and_max_ticks ()
   {
     val someData = new Data()
     someData.initializeDataset(newPoints = Some(Array(Array(-1.0, 2.0, 4.0), 
@@ -346,5 +338,26 @@ class UnitTests {
       kuva.largestTickY.toInt == 20 &&
       kuva.smallestTickY.toInt == -10
     )
-  }  
+  }
+  
+  @Test def quadModel_should_give_correct_coefficients ()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(0.0, -1.0, -0.5, 2.0), 
+                                                      Array(1.0, 0.0, 0.0, 15.0))))
+    val quad = new QuadModel(someData) 
+    quad.fitData
+    assertTrue(
+      "The quadModel should give the coefficients 1, 3 and 2.\n" +
+      "Instead got " + quad.getEquation.get(0) + ", " + 
+      quad.getEquation.get(1) + " and " + quad.getEquation.get(2),
+      quad.getEquation.get(0) >= 0.99 &&
+      quad.getEquation.get(0) < 1.01 &&
+      quad.getEquation.get(1) >= 2.99 &&
+      quad.getEquation.get(1) < 3.01 &&
+      quad.getEquation.get(2) >= 1.99 &&
+      quad.getEquation.get(2) < 2.01
+    )
+  }
+  
 }
