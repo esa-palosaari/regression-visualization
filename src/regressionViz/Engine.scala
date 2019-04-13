@@ -13,6 +13,7 @@ class Engine {
     if (fileName.toLowerCase.endsWith(".csv"))
     {
       val reader = new CSVReader
+      // TODO: Add variable names to data
       data += reader.readFile(fileName).get
     }
     
