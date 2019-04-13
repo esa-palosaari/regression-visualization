@@ -343,8 +343,8 @@ class UnitTests {
   @Test def quadModel_should_give_correct_coefficients ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(0.0, -1.0, -0.5, 2.0), 
-                                                      Array(1.0, 0.0, 0.0, 15.0))))
+    someData.initializeDataset(newPoints = Some(Array(Array(-2.0, 0.0, -1.0, -0.5, 2.0), 
+                                                      Array(15.0, 1.0, 0.0, 0.0, 15.0))))
     val quad = new QuadModel(someData) 
     quad.fitData
     assertTrue(

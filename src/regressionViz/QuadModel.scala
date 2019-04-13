@@ -15,8 +15,8 @@ class QuadModel (data: Data) extends Model(data) {
   // TODO: a maximum and minimum Y for non-linear models?
   def fitData: Unit = 
   {
-    // listwise deletion for missing values
-    if (!fittedData.isEmpty) checkAndDeleteMissingRows
+    // TODO: listwise deletion for missing values needs updating?
+    if (fittedData.isEmpty) checkAndDeleteMissingRows
     
     // check that there are enough rows and columns
     // after deleting rows with missing values
@@ -41,7 +41,10 @@ class QuadModel (data: Data) extends Model(data) {
       val originalLength = originalPoints(0).length
       val oneVector = Array.fill(originalLength)(1.0)
       val oneIncluded = oneVector +: originalPoints.dropRight(1)
-      oneIncluded
+      val toSecondPower = Array.fill(originalLength)(0.0)
+      originalPoints(1).zipWithIndex.map(x => toSecondPower(x._2) = sqrt(x._1))
+      val secondIncluded = oneIncluded :+ toSecondPower
+      secondIncluded
     }
     // outcome variable is the last one
     val y: Array[Double] = fittedData.get.getPoints.get.last
