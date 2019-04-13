@@ -10,7 +10,7 @@ class QuadModel (data: Data) extends Model(data) {
   def getY(x: Double): Double =
   {
     require(equation.isDefined)
-    equation.get(0) + equation.get(1)*x + equation.get(2)*pow(2, x)
+    equation.get(0) + equation.get(1)*x + equation.get(2)*pow(x,2)
   }    
   // TODO: a maximum and minimum Y for non-linear models?
   def fitData: Unit = 
