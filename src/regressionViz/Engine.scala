@@ -23,7 +23,12 @@ class Engine {
   {
     modelType match 
     {
-      case "log" => println("log model missing")
+      case "quad" => 
+        {
+          val quadModel = new QuadModel(dataToFit)
+          quadModel.fitData
+          models += quadModel
+        }
       case _ => 
         {
           val unfitModel = new OLSModel(dataToFit)

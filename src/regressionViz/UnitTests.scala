@@ -343,20 +343,21 @@ class UnitTests {
   @Test def quadModel_should_give_correct_coefficients ()
   {
     val someData = new Data()
-    someData.initializeDataset(newPoints = Some(Array(Array(-2.0, 0.0, -1.0, -0.5, 2.0), 
-                                                      Array(15.0, 1.0, 0.0, 0.0, 15.0))))
+    someData.initializeDataset(newPoints = Some(
+        Array(Array(0.0, -1.0, -0.5,      2.0, -2.0), 
+              Array(1.0, 1.0,   0.96875,  4.0,  2.0))))
     val quad = new QuadModel(someData) 
     quad.fitData
     assertTrue(
-      "The quadModel should give the coefficients 1, 3 and 2.\n" +
+      "The quadModel should give the coefficients 1, 0.5 and 0.5.\n" +
       "Instead got " + quad.getEquation.get(0) + ", " + 
-      quad.getEquation.get(1) + " and " + quad.getEquation.get(2),
-      quad.getEquation.get(0) >= 0.99 &&
-      quad.getEquation.get(0) < 1.01 &&
-      quad.getEquation.get(1) >= 2.99 &&
-      quad.getEquation.get(1) < 3.01 &&
-      quad.getEquation.get(2) >= 1.99 &&
-      quad.getEquation.get(2) < 2.01
+      quad.getEquation.get(1) + " and " + quad.getEquation.get(2) ,
+      quad.getEquation.get(0) >= 0.95 &&
+      quad.getEquation.get(0) < 1.05 &&
+      quad.getEquation.get(1) >= 0.48 &&
+      quad.getEquation.get(1) < 0.52 &&
+      quad.getEquation.get(2) >= 0.48 &&
+      quad.getEquation.get(2) < 0.52
     )
   }
   

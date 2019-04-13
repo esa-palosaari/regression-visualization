@@ -42,7 +42,7 @@ class QuadModel (data: Data) extends Model(data) {
       val oneVector = Array.fill(originalLength)(1.0)
       val oneIncluded = oneVector +: originalPoints.dropRight(1)
       val toSecondPower = Array.fill(originalLength)(0.0)
-      originalPoints(1).zipWithIndex.map(x => toSecondPower(x._2) = sqrt(x._1))
+      originalPoints(0).zipWithIndex.map(x => toSecondPower(x._2) = pow(x._1,2))
       val secondIncluded = oneIncluded :+ toSecondPower
       secondIncluded
     }

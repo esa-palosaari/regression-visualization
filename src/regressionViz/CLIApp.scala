@@ -94,7 +94,7 @@ object CLIApp {
           curveColorG = Some(curveG.toInt) 
         }
       case Array("--modeltype", "normal") => modelType = "normal"
-      case Array("--modeltype", "log") => modelType = "log"
+      case Array("--modeltype", "quad") => modelType = "quad"
       case Array("--xmax", xmaxValue: String) => xmax = Some(xmaxValue.toInt)
       case Array("--xmin", xminValue: String) => xmin = Some(xminValue.toInt)
       case Array("--ymax", ymaxValue: String) => ymax = Some(ymaxValue.toInt)
