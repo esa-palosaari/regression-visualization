@@ -2,7 +2,7 @@ package regressionViz
 
 import scala.collection.mutable.ArrayBuffer
 
-class CSVReader extends DataReader 
+class CSVReader(var1Name: String, var2Name: String) extends DataReader 
 {
   // example here: https://alvinalexander.com/scala/csv-file-how-to-process-open-read-parse-in-scala
   def readFile(filename: String): Option[Data] =
@@ -39,14 +39,36 @@ class CSVReader extends DataReader
         lineNumber += 1
       }
     } 
+    catch
+    {
+      case e:Exception =>
+        {
+          val csvReaderException = new Exception(
+              "Reading a csv file failed.")
+          csvReaderException.initCause(e)
+          throw csvReaderException          
+        }
+    }
     finally
     {
       bufferedFile.close()
     }
-     
-    var dataToArrays = dataBuffer.map(_.toArray).toArray
-    val data = new Data
-    data.initializeDataset(newPoints = Some(dataToArrays))
-    Some(data)
+    try
+    {
+      var dataToArrays = dataBuffer.map(_.toArray).toArray
+      val data = new Data
+      data.initializeDataset(newPoints = Some(dataToArrays))
+      Some(data)  
+    }
+    catch
+    {
+      case e:Exception =>
+        {
+          val csvReaderException = new Exception(
+              "Initializing data from a csv file failed.")
+          csvReaderException.initCause(e)
+          throw csvReaderException          
+        }
+    }    
   }
 }

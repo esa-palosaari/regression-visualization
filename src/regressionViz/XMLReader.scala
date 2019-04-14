@@ -5,7 +5,7 @@ import java.io._
 import scala.xml._
 
 /*
- * https://dzone.com/articles/working-with-xml-in-scala
+ * Using examples from https://dzone.com/articles/working-with-xml-in-scala
  */
 
 class XMLReader (var1Name: String, var2Name: String) extends DataReader
@@ -40,8 +40,18 @@ class XMLReader (var1Name: String, var2Name: String) extends DataReader
         
       val data = new Data
       data.initializeDataset(newPoints = Some(dataToArrays), 
-                            newVarNames = Some(ArrayBuffer(var1Name, var2Name)))
+                             newVarNames = Some(ArrayBuffer(var1Name, var2Name)))
       return Some(data)
+    }
+    catch
+    {
+      case e: Exception =>
+        {
+          val xmlReaderException = new Exception(
+              "Reading an xml file failed.")
+          xmlReaderException.initCause(e)
+          throw xmlReaderException
+        }
     }
     
     None

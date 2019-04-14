@@ -8,13 +8,52 @@ class Engine {
   var models: ArrayBuffer[Model] = ArrayBuffer[Model]()
   var visuals: ArrayBuffer[Drawing] = ArrayBuffer[Drawing]()
   
-  def readData(fileName: String) =
+
+  def readData(fileName: Option[String], 
+               var1Name: Option[String], 
+               var2Name: Option[String]) =
   {
-    if (fileName.toLowerCase.endsWith(".csv"))
+    try
     {
-      val reader = new CSVReader
-      // TODO: Add variable names to data
-      data += reader.readFile(fileName).get
+      fileName match 
+      {
+        case None => throw new Exception("No file name")
+        case Some(fileName) =>
+          {
+            if (fileName.toLowerCase.endsWith(".xml"))
+            {
+              if (var1Name.isEmpty || var2Name.isEmpty) 
+                throw new Exception("XML data requires variable names.") 
+              val xmlReader = new XMLReader(var1Name.get, var2Name.get)
+              val xmlData = xmlReader.readFile(fileName)
+              if (xmlData.isEmpty)
+                throw new Exception("Reading data from file " + fileName + " failed.")
+              data += xmlData.get
+            }
+      
+            if (fileName.toLowerCase.endsWith(".csv"))
+            {
+              val csvReader = new CSVReader(var1Name.getOrElse(""),
+                                         var2Name.getOrElse("")
+                                         )
+              val csvData = csvReader.readFile(fileName)
+              if(csvData.isEmpty)
+                throw new Exception("Reading data from file " +fileName+ " failed.")
+              data += csvData.get
+            }            
+           }
+      }
+
+    }
+    catch
+    {
+      case e:Exception => 
+        {
+          val readerException = new Exception(
+              "Reading data from file failed")
+          readerException.initCause(e)
+          throw readerException
+        }
     }
     
   }
