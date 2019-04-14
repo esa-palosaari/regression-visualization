@@ -305,6 +305,43 @@ class UnitTests {
     )
   }
   
+  @Test def XMLReader_should_return_None_when_filename_invalid ()
+  {
+    val reader = new XMLReader("testi1", "testi2")
+    val data: Option[Data] = reader.readFile("")
+    assertTrue(
+      "Insted the returned value was: " + data.toString,
+      data.isEmpty
+    )
+  }
+  
+  @Test def XMLReader_should_return_None_when_varNames_produce_none ()
+  {
+    val reader = new XMLReader("nemo1", "nemo2")
+    val data: Option[Data] = reader.readFile("testIO/testi.xml")
+    assertTrue(
+      "Insted the returned value was: " + data.toString,
+      data.isEmpty
+    )
+  }  
+  
+  @Test def XMLReader_should_return_correct_data ()
+  {
+    val reader = new XMLReader("PE", "MarketCap")
+    val data: Option[Data] = reader.readFile("testIO/testi.csv")
+    assertTrue(
+      "Instead of 21.65, (0,0) was: " + data.get.getPoints.get(0)(0),
+      data.get.getPoints.get(0)(0) == 21.65 && 
+      data.get.getPoints.get(0)(1) == 23.71 &&
+      data.get.getPoints.get(0)(2) == 17.87 &&
+      data.get.getPoints.get(0)(3) == 65.41 &&
+      data.get.getPoints.get(1)(0) == 271.18 &&
+      data.get.getPoints.get(1)(1) == 15.583873 &&
+      data.get.getPoints.get(1)(2) == 225.61 &&
+      data.get.getPoints.get(1)(3) == 32.24
+    )
+  }  
+  
   @Test def Drawing_has_correct_min_and_max_ticks ()
   {
     val someData = new Data()
