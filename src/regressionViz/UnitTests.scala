@@ -320,7 +320,7 @@ class UnitTests {
     val reader = new XMLReader("nemo1", "nemo2")
     val data: Option[Data] = reader.readFile("testIO/testi.xml")
     assertTrue(
-      "Insted the returned value was: " + data.toString,
+      "Instead the returned value was: " + data.toString,
       data.isEmpty
     )
   }  
@@ -328,15 +328,22 @@ class UnitTests {
   @Test def XMLReader_should_return_correct_data ()
   {
     val reader = new XMLReader("PE", "MarketCap")
-    val data: Option[Data] = reader.readFile("testIO/testi.csv")
+    val data: Option[Data] = reader.readFile("testIO/testi.xml")
     assertTrue(
-      "Instead of 21.65, (0,0) was: " + data.get.getPoints.get(0)(0),
+      "Instead of 21.65, (0,0) was: " + data.get.getPoints.get(0)(0) +
+      "\nInstead of 23.71, (0,1) was: " + data.get.getPoints.get(0)(1) +
+      "\nInstead of 17.87, (0,2) was: " + data.get.getPoints.get(0)(2) +
+      "\nInstead of 65.41, (0,3) was: " + data.get.getPoints.get(0)(3) +
+      "\nInstead of 271.18, (1,0) was: " + data.get.getPoints.get(1)(0) +
+      "\nInstead of 15.58383, (1,1) was: " + data.get.getPoints.get(1)(1) +
+      "\nInstead of 225.61, (1,2) was: " + data.get.getPoints.get(1)(2)+
+      "\nInstead of 32.24, (1,3) was: " + data.get.getPoints.get(1)(3),
       data.get.getPoints.get(0)(0) == 21.65 && 
       data.get.getPoints.get(0)(1) == 23.71 &&
       data.get.getPoints.get(0)(2) == 17.87 &&
       data.get.getPoints.get(0)(3) == 65.41 &&
       data.get.getPoints.get(1)(0) == 271.18 &&
-      data.get.getPoints.get(1)(1) == 15.583873 &&
+      data.get.getPoints.get(1)(1) == 15.53873 &&
       data.get.getPoints.get(1)(2) == 225.61 &&
       data.get.getPoints.get(1)(3) == 32.24
     )
