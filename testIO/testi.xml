@@ -1,17 +1,18 @@
+<?xml version="1.0"?>
 <symbols>
-	<symbol ticker="Cisco" >
+	<symbol ticker="Cisco">
 		<PE>21.65</PE>
 		<MarketCap>271.18</MarketCap>
 	</symbol>
-	<symbol ticker="Sandisk" >
+	<symbol ticker="Sandisk">
 		<PE>23.71</PE>
 		<MarketCap>15.53873</MarketCap>
 	</symbol>
-	<symbol ticker="Oracle" >
+	<symbol ticker="Oracle">
 		<PE>17.87</PE>
 		<MarketCap>225.61</MarketCap>
 	</symbol>
-	<symbol ticker="Red Hat" >
+	<symbol ticker="Red Hat">
 		<PE>65.41</PE>
 		<MarketCap>32.24</MarketCap>
 	</symbol>
