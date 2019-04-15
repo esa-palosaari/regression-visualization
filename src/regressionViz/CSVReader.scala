@@ -57,7 +57,10 @@ class CSVReader(var1Name: String, var2Name: String) extends DataReader
     {
       var dataToArrays = dataBuffer.map(_.toArray).toArray
       val data = new Data
-      data.initializeDataset(newPoints = Some(dataToArrays))
+      var varNames: Option[ArrayBuffer[String]] = Some(ArrayBuffer(var1Name, var2Name))
+      if (var1Name.equals("") || var2Name.equals("")) varNames = None
+      data.initializeDataset(newPoints = Some(dataToArrays),
+                             newVarNames=varNames)
       Some(data)  
     }
     catch

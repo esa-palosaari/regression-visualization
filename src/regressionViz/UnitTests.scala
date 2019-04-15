@@ -282,7 +282,7 @@ class UnitTests {
   
   @Test def CSVReader_should_return_None_when_filename_invalid ()
   {
-    val reader = new CSVReader
+    val reader = new CSVReader("", "")
     val data: Option[Data] = reader.readFile("")
     assertTrue(
       "Insted the returned value was: " + data.toString,
@@ -292,7 +292,7 @@ class UnitTests {
   
   @Test def CSVReader_should_return_correct_data ()
   {
-    val reader = new CSVReader
+    val reader = new CSVReader("", "")
     val data: Option[Data] = reader.readFile("testIO/testi.csv")
     assertTrue(
       "Instead of 1.0, (0,0) was: " + data.get.getPoints.get(0)(0),

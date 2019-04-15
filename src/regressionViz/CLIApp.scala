@@ -14,22 +14,31 @@ import java.awt.Color
 object CLIApp {
   val usage = """
       This app creats a visualisation of a regression model fitted to data.
-      Data and output file names are required, the rest are optional.
+      Data and output file names are required (and variable names if you are
+      using xml files: they must match), the rest are optional and have default values.
       
-      Usage: cliapp --d [path\to\dataFileName.csv|.xml] --o [path\to\outputFileName.png] 
-                      --modeltype [normal | log]
-                      --sizex [image size, horizontal] --sizey [image size, vertical]
-                      --xmax [max_x-axis_value] --xmin [min_x-axis_value] 
-                      --ymax [max_y-axis_value] --ymin [min_y-axis_value]
-                      --pR [data point Red: 0-255] --pB [data point Blue: 0-255]  
-                      --pG [data point Green: 0-255] --cR [regression curve Red: 0-255]
-                      --cB [regression curve Blue: 0-255] --cG [regression curve Green: 0-255]
+      Usage: cliapp --d [path\to\dataFileName.csv|.xml] 
+                    --o [path\to\outputFileName.png]
+                    --varx [nameForXVariable]
+                    --vary [nameForYVariable]
+                    --modeltype [normal | quad]
+                    --sizex [image size, horizontal] 
+                    --sizey [image size, vertical]
+                    --xmax [max_x-axis_value] 
+                    --xmin [min_x-axis_value] 
+                    --ymax [max_y-axis_value] 
+                    --ymin [min_y-axis_value]
+                    --pR [data point Red: 0-255] 
+                    --pB [data point Blue: 0-255]  
+                    --pG [data point Green: 0-255] 
+                    --cR [regression curve Red: 0-255]
+                    --cB [regression curve Blue: 0-255] 
+                    --cG [regression curve Green: 0-255]
     """
-  // TODO: Add variable names.
   val engine = new Engine
   type OptionMap = Map[Symbol, Any]
   
-  def main(args: Array[String]): (String, String) =
+  def main(args: Array[String]): Unit =
   {
     if(args.length == 0) println(usage)
     val argumentList = args.toList
@@ -37,6 +46,8 @@ object CLIApp {
     var dataFilename = ""
     var imageFilename = ""
     var modelType = ""
+    var varx = ""
+    var vary = ""
     var sizex: Option[Int] = None
     var sizey: Option[Int] = None
     var xmax: Option[Int] = None
@@ -99,6 +110,8 @@ object CLIApp {
       case Array("--xmin", xminValue: String) => xmin = Some(xminValue.toInt)
       case Array("--ymax", ymaxValue: String) => ymax = Some(ymaxValue.toInt)
       case Array("--ymin", yminValue: String) => ymin = Some(yminValue.toInt)
+      case Array("--varx", varXName: String) => varx = varXName
+      case Array("--vary", varYName: String) => vary = varYName
       case Array("--d", dname: String) => dataFilename = dname
       case Array("--o", iname: String) => imageFilename = iname
       case _ => println("Could not parse all options.\n" + usage)
@@ -108,19 +121,29 @@ object CLIApp {
      * Käyttäjä pystyy lataamaan datajoukon valitsemastaan 
      * tiedostosta, joka voi sisältää suurenkin määrän 
      * (x, y)-koordinaattipareja.
-     * 
-     * TODO: Tuki vähintään kahdelle erilaiselle tiedostomuodolle.
      */
-    
-    if(!dataFilename.equals("")) 
+    try
     {
-      engine.readData(dataFilename)  
-    } 
-    else 
-    {
-      println("Please give the name of the data file.")
-      System.exit(1)
+      if(!dataFilename.equals("")) 
+      {
+        if (varx.equals("") || vary.equals(""))
+          engine.readData(Some(dataFilename), None, None)
+        else
+          engine.readData(Some(dataFilename), Some(varx), Some(vary))
+      } 
+      else 
+      {
+        println("Please give the name of the data file.")
+        System.exit(1)
+      }
     }
+    catch
+    {
+      case e:Exception =>
+        println(e.getMessage)
+        System.exit(1)
+    }
+
     
     /* 
      * TODO: Toteuta vähintään yksi regressiomenetelmä yksinkertaisen 
@@ -154,8 +177,6 @@ object CLIApp {
       engine.saveImage(engine.visuals(0), "image.png")
     else
       engine.saveImage(engine.visuals(0), imageFilename)
-    
-    (dataFilename, imageFilename)
 
   }
 }
