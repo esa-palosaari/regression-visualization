@@ -137,25 +137,26 @@ class Drawing (  val model: Model,
 
   
   // how many ticks smaller is max point or curve than the image boundary? 
+  // TODO: Fix extraTicks
   val extraTicksX = 
     {
       if(xmax.isDefined)
         0
       else
-      ((plotSizeX - ((abs(minX - maxX)/orderX).toInt*orderX *axisUnit)/
-          axisUnit))
+      ((plotSizeX - ((abs(maxX - minX)/orderX)*orderX *axisUnit)))/axisUnit
     }
-                      
+            
+  println("extraTicksX " + extraTicksX)
 
   val extraTicksY =
     {
       if(ymax.isDefined)
         0
       else
-        ((plotSizeY - (abs(maxY - minY)/orderY).toInt*orderY*axisUnit)/
-        axisUnit)
+        ((plotSizeY - (abs(maxY - minY)/orderY)*orderY)*axisUnit)/axisUnit
     }
                         
+  println("extraTicksY " + extraTicksY)
                       
   // number of axisUnits that "fit" on the coordinate axes
   val numberOfUnitsX = (plotSizeX/axisUnit).floor.toInt
@@ -203,7 +204,7 @@ class Drawing (  val model: Model,
   g.setFont(new Font("Arial", Font.PLAIN, 12))        
   // write the tick numbers on the plot axes
   // numbers to x-axis
-  var index = largestTickX + extraTicksX 
+  var index = largestTickX + extraTicksX
   while (index >= smallestTickX)
   {
     g.drawString(  
@@ -282,8 +283,8 @@ class Drawing (  val model: Model,
   {
     val point1Xcoord = yWidth + (xIndex - smallestTickX)*axisUnit
     val point1Ycoord = xHeight - axisUnit*(model.getY(xIndex) - smallestTickY)
-    val point2Xcoord = (xIndex+1-smallestTickX)*axisUnit + yWidth
-    val point2Ycoord = xHeight - axisUnit*(model.getY(xIndex+1)- smallestTickY)
+    val point2Xcoord = (xIndex+(orderMinX/50.0)-smallestTickX)*axisUnit + yWidth
+    val point2Ycoord = xHeight - axisUnit*(model.getY(xIndex+(orderMinX/50.0))- smallestTickY)
     if(point1Ycoord < yLoHeight && 
        point2Ycoord < yLoHeight && 
        point1Ycoord > yHiHeight &&
@@ -298,7 +299,8 @@ class Drawing (  val model: Model,
                                 )
         ) 
     }
-    xIndex += 1
+
+    xIndex += (orderMinX/50.0)
   }
   
   
