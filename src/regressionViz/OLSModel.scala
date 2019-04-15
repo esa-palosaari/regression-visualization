@@ -49,6 +49,17 @@ class OLSModel (data: Data) extends Model (data)
     equation.get(0) + equation.get(1)*x
   }
   
+   def equationToString: String =
+   {
+     require(equation.isDefined)
+     var equationString = ""
+     if(equation.get(1) >= 0) 
+       equationString = ""+equation.get(0) +" + "+ equation.get(1)+"x"
+     else
+       equationString = ""+equation.get(0) +" "+ equation.get(1)+"x"
+     return equationString
+   }
+  
   protected def calculateNormalEquation =
   {
     // add the intercept to the equation (i.e. column of ones)

@@ -11,7 +11,16 @@ class QuadModel (data: Data) extends Model(data) {
   {
     require(equation.isDefined)
     equation.get(0) + equation.get(1)*x + equation.get(2)*pow(x,2)
-  }    
+  }   
+  
+   def equationToString: String =
+   {
+     require(equation.isDefined)
+     var equationString = ""+equation.get(0) +" + ("+ equation.get(1)+")x" +
+       "("+equation.get(2)+")x^2"
+     return equationString
+   }  
+  
   // TODO: a maximum and minimum Y for non-linear models?
   def fitData: Unit = 
   {

@@ -21,6 +21,7 @@ abstract class Model (data: Data)
   // TODO: a maximum and minimum Y for non-linear models?
   @throws(classOf[Exception])
   def fitData: Unit
+  def equationToString: String
   
   def checkAndDeleteMissingRows = 
   {
