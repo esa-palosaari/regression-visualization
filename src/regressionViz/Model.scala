@@ -19,6 +19,7 @@ abstract class Model (data: Data)
   def getFittedData: Option[Data] = fittedData  
   def getY(x: Double): Double
   // TODO: a maximum and minimum Y for non-linear models?
+  @throws(classOf[Exception])
   def fitData: Unit
   
   def checkAndDeleteMissingRows = 

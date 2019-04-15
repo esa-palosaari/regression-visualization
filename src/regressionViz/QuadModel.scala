@@ -16,19 +16,50 @@ class QuadModel (data: Data) extends Model(data) {
   def fitData: Unit = 
   {
     // TODO: listwise deletion for missing values needs updating?
-    if (fittedData.isEmpty) checkAndDeleteMissingRows
+    if (fittedData.isEmpty) 
+    {
+      try checkAndDeleteMissingRows
+      catch
+      {
+        case e:Exception =>
+        {
+          val missingException = new Exception(
+              "Problems in checking and deleting missing rows.")
+          missingException.initCause(e)
+          throw missingException
+        }
+      }
+    }
     
     // check that there are enough rows and columns
     // after deleting rows with missing values
-    require(fittedData.isDefined && 
+    if(!(fittedData.isDefined && 
         fittedData.get.getPoints.isDefined &&
         fittedData.get.getPoints.get.length > 1 &&
-        fittedData.get.getPoints.get(0).length> 1,
-        "There should be enough rows and columns " +
-        "in the dataset after listwise deletion.")
+        fittedData.get.getPoints.get(0).length> 1))
+    {
+      val fitDataException = new Exception(
+          "There should be enough rows and columns " +
+          "in the dataset after listwise deletion.")
+      throw fitDataException
+    }
+    try
+    {
+      calculateNormalEquation
+      calculateResiduals  
+    }
+    catch
+    {
+      case e:Exception =>
+        {
+          val normalException = new Exception(
+              "Problems in estimating the normal equation " +
+              "and the residuals.")
+          normalException.initCause(e)
+          throw normalException  
+        }
+    }
     
-    calculateNormalEquation
-    calculateResiduals
   }
   
   protected def calculateNormalEquation =

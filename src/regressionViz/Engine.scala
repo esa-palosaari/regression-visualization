@@ -60,21 +60,37 @@ class Engine {
   
   def fitModel(modelType: String, dataToFit: Data) =
   {
-    modelType match 
+    try
     {
-      case "quad" => 
+      modelType match 
+      {
+        case "quad" => 
         {
           val quadModel = new QuadModel(dataToFit)
           quadModel.fitData
           models += quadModel
         }
-      case _ => 
+        case _ => 
         {
           val unfitModel = new OLSModel(dataToFit)
           unfitModel.fitData
           models += unfitModel
         }
+      }  
     }
+    catch
+    {
+      case e: Exception =>
+        {
+          val modelException = new Exception(
+              "Problem fitting a model")
+          modelException.initCause(e)
+          throw modelException
+          
+        }
+        
+    }
+    
   }
   
   def drawImage(  model: Model,
@@ -92,7 +108,9 @@ class Engine {
                   cG: Option[Int]
                 ) = 
   {
-     visuals += new Drawing(  model, 
+    try
+    {
+       visuals += new Drawing(  model, 
                               sizex,
                               sizey,
                               xmax,
@@ -105,14 +123,40 @@ class Engine {
                               cR,
                               cB,
                               cG
-                           )
+                           ) 
+    }
+    catch
+    {
+      case e:Exception =>
+        {
+        	val drawException = new Exception(
+        			"Problem drawing an image")
+    			drawException.initCause(e)
+    			throw drawException 
+        }
+    }
+     
   }
   
   def saveImage(image: Drawing, fileName: String) =
   {
-    javax.imageio.ImageIO.write(  image.canvas, 
-                                  "png", 
-                                  new java.io.File(fileName)
-                               )
+    try
+    {
+    	javax.imageio.ImageIO.write(  image.canvas, 
+                              			"png", 
+                              			new java.io.File(fileName)
+                          			 )
+    }
+    catch
+    {
+      case e:Exception =>
+        {
+        	val saveException = new Exception(
+        			"Problem saving an image to file")
+    			saveException.initCause(e)
+    			throw saveException    
+        }
+      
+    }
   }
 }

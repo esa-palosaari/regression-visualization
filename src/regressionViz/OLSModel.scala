@@ -14,15 +14,33 @@ class OLSModel (data: Data) extends Model (data)
     
     // check that there are enough rows and columns
     // after deleting rows with missing values
-    require(fittedData.isDefined && 
+    if(!(fittedData.isDefined && 
         fittedData.get.getPoints.isDefined &&
         fittedData.get.getPoints.get.length > 1 &&
-        fittedData.get.getPoints.get(0).length> 1,
-        "There should be enough rows and columns " +
-        "in the dataset after listwise deletion.")
-    
-    calculateNormalEquation
-    calculateResiduals
+        fittedData.get.getPoints.get(0).length> 1))
+    {
+      val fitDataException = new Exception(
+          "There should be enough rows and columns " +
+          "in the dataset after listwise deletion.")
+      throw fitDataException
+    }
+        
+    try
+    {
+      calculateNormalEquation
+      calculateResiduals  
+    }
+    catch
+    {
+      case e:Exception =>
+        {
+          val normalException = new Exception(
+              "Problems in estimating the normal equation " +
+              "and the residuals.")
+          normalException.initCause(e)
+          throw normalException  
+        }
+    }
   }
   
   def getY(x: Double): Double = 

@@ -146,11 +146,20 @@ object CLIApp {
 
     
     /* 
-     * TODO: Toteuta vähintään yksi regressiomenetelmä yksinkertaisen 
-     * lineaariregression lisäksi. (Joko molemmat yhtälöt, tai 
-     * ensimmäinen yhtälö sekä itse valitsemasi muu menetelmä)
+     * Fits two types of OLS models: linear and quadratic
      */
-     engine.fitModel(modelType, engine.data(0))
+    try
+    {
+      engine.fitModel(modelType, engine.data(0)) 
+    }
+    catch
+    {
+      case e: Exception =>
+        println("Problem when fitting a model")
+        println(e.getMessage)
+        System.exit(1)
+    }
+     
       
     /*
      * Ohjelman tulee tehdä kuvaaja alkuperäisistä datapisteistä 
@@ -158,25 +167,51 @@ object CLIApp {
      * säätämään kuvaajan asetuksia, esimerkiksi akselien 
      * päätepisteitä.
      */
-     engine.drawImage(  engine.models(0),
-                        sizex,
-                        sizey,
-                        xmax,
-                        xmin,
-                        ymax,
-                        ymin,
-                        pointColorR,
-                        pointColorB,
-                        pointColorG,
-                        curveColorR,
-                        curveColorB,
-                        curveColorG
-                      )
-     
-    if(imageFilename.equals(""))
-      engine.saveImage(engine.visuals(0), "image.png")
-    else
-      engine.saveImage(engine.visuals(0), imageFilename)
+    try
+    {
+      engine.drawImage(  engine.models(0),
+                          sizex,
+                          sizey,
+                          xmax,
+                          xmin,
+                          ymax,
+                          ymin,
+                          pointColorR,
+                          pointColorB,
+                          pointColorG,
+                          curveColorR,
+                          curveColorB,
+                          curveColorG
+                        )
+    }
+    catch
+    {
+      case e:Exception =>
+        {
+        	println("Problem when drawing an image")
+        	println(e.getMessage)
+        	System.exit(1)          
+        }
+    }       
+    
+    try
+    {
+    	if(imageFilename.equals(""))
+    		engine.saveImage(engine.visuals(0), "image.png")
+       else
+  			engine.saveImage(engine.visuals(0), imageFilename)      
+    }
+        catch
+    {
+      case e:Exception =>
+        {
+        	println("Problem when saving an image")
+        	println(e.getMessage)
+        	System.exit(1)          
+        }
+    }   
+      
 
+     
   }
 }
