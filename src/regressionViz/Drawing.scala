@@ -99,11 +99,36 @@ class Drawing (  val model: Model,
     if (negative) return -rounded else return rounded
   }
   
-  // get the rounded end points 
-  val smallestTickX = (minX/orderX).toInt*orderX - orderX
-  val largestTickX = (maxX/orderX).toInt*orderX + orderX
-  val smallestTickY = (minY/orderY).toInt*orderY - orderY
-  val largestTickY = (maxY/orderY).toInt*orderY + orderY
+  // calculate the end points
+  // dependent on whether x and y max and min given
+  val smallestTickX = 
+    {
+      if(xmin.isEmpty) 
+        (minX/orderX).toInt*orderX - orderX
+      else
+        minX
+    }
+  val largestTickX = 
+    {
+      if(xmax.isEmpty)
+        (maxX/orderX).toInt*orderX + orderX
+      else
+        maxX
+    }
+  val smallestTickY = 
+    {
+      if(ymin.isEmpty)
+        (minY/orderY).toInt*orderY - orderY
+      else
+        minY
+    }
+  val largestTickY = 
+    {
+      if(ymax.isEmpty)
+        (maxY/orderY).toInt*orderY + orderY
+      else
+        maxY
+    }
      
   
   val axisXUnit = (plotSizeX/(abs(largestTickX-smallestTickX)))
@@ -112,11 +137,25 @@ class Drawing (  val model: Model,
 
   
   // how many ticks smaller is max point or curve than the image boundary? 
-  val extraTicksX = ((plotSizeX - ((abs(minX - maxX)/orderX).toInt*orderX *axisUnit)/
-                      axisUnit))
+  val extraTicksX = 
+    {
+      if(xmax.isDefined)
+        0
+      else
+      ((plotSizeX - ((abs(minX - maxX)/orderX).toInt*orderX *axisUnit)/
+          axisUnit))
+    }
+                      
 
-  val extraTicksY = ((plotSizeY - (abs(maxY - minY)/orderY).toInt*orderY*axisUnit)/
-                      axisUnit)  
+  val extraTicksY =
+    {
+      if(ymax.isDefined)
+        0
+      else
+        ((plotSizeY - (abs(maxY - minY)/orderY).toInt*orderY*axisUnit)/
+        axisUnit)
+    }
+                        
                       
   // number of axisUnits that "fit" on the coordinate axes
   val numberOfUnitsX = (plotSizeX/axisUnit).floor.toInt

@@ -64,59 +64,71 @@ object CLIApp {
     /*
      * Parse command line options
      */
-    args.sliding(2, 2).toList.collect 
+    try
     {
-      case Array("--sizex", imageX: String) => sizex = Some(imageX.toInt)
-      case Array("--sizey", imageY: String) => sizey = Some(imageY.toInt)
-      case Array("--pR", pointR: String) => 
-        {
-          require(pointR.toInt < 256 && pointR.toInt >= 0, 
+      args.sliding(2, 2).toList.collect 
+      {
+        case Array("--sizex", imageX: String) => sizex = Some(imageX.toInt)
+        case Array("--sizey", imageY: String) => sizey = Some(imageY.toInt)
+        case Array("--pR", pointR: String) => 
+          {
+            require(pointR.toInt < 256 && pointR.toInt >= 0, 
+                    "RBG values are 0-255")
+            pointColorR = Some(pointR.toInt) 
+          }
+        case Array("--pB", pointB: String) => 
+          {
+            require(pointB.toInt < 256 && pointB.toInt >= 0, 
                   "RBG values are 0-255")
-          pointColorR = Some(pointR.toInt) 
-        }
-      case Array("--pB", pointB: String) => 
-        {
-          require(pointB.toInt < 256 && pointB.toInt >= 0, 
-                "RBG values are 0-255")
-          pointColorB = Some(pointB.toInt) 
-        }
-      case Array("--pG", pointG: String) => 
-        {
-          require(pointG.toInt < 256 && pointG.toInt >= 0, 
-                  "RBG values are 0-255")          
-          pointColorG = Some(pointG.toInt) 
-        }
-      case Array("--cR", curveR: String) => 
-        {
-          require(curveR.toInt < 256 && curveR.toInt >= 0, 
-                  "RBG values are 0-255")          
-          curveColorR = Some(curveR.toInt) 
-        }
-      case Array("--cB", curveB: String) => 
-        {
-          require(curveB.toInt < 256 && curveB.toInt >= 0, 
-                  "RBG values are 0-255")
-          curveColorB = Some(curveB.toInt) 
-        }
-      case Array("--cG", curveG: String) => 
-        {
-          require(curveG.toInt < 256 && curveG.toInt >= 0, 
-                  "RBG values are 0-255")
-          curveColorG = Some(curveG.toInt) 
-        }
-      case Array("--modeltype", "normal") => modelType = "normal"
-      case Array("--modeltype", "quad") => modelType = "quad"
-      case Array("--xmax", xmaxValue: String) => xmax = Some(xmaxValue.toInt)
-      case Array("--xmin", xminValue: String) => xmin = Some(xminValue.toInt)
-      case Array("--ymax", ymaxValue: String) => ymax = Some(ymaxValue.toInt)
-      case Array("--ymin", yminValue: String) => ymin = Some(yminValue.toInt)
-      case Array("--varx", varXName: String) => varx = varXName
-      case Array("--vary", varYName: String) => vary = varYName
-      case Array("--d", dname: String) => dataFilename = dname
-      case Array("--o", iname: String) => imageFilename = iname
-      case _ => println("Could not parse all options.\n" + usage)
+            pointColorB = Some(pointB.toInt) 
+          }
+        case Array("--pG", pointG: String) => 
+          {
+            require(pointG.toInt < 256 && pointG.toInt >= 0, 
+                    "RBG values are 0-255")          
+            pointColorG = Some(pointG.toInt) 
+          }
+        case Array("--cR", curveR: String) => 
+          {
+            require(curveR.toInt < 256 && curveR.toInt >= 0, 
+                    "RBG values are 0-255")          
+            curveColorR = Some(curveR.toInt) 
+          }
+        case Array("--cB", curveB: String) => 
+          {
+            require(curveB.toInt < 256 && curveB.toInt >= 0, 
+                    "RBG values are 0-255")
+            curveColorB = Some(curveB.toInt) 
+          }
+        case Array("--cG", curveG: String) => 
+          {
+            require(curveG.toInt < 256 && curveG.toInt >= 0, 
+                    "RBG values are 0-255")
+            curveColorG = Some(curveG.toInt) 
+          }
+        case Array("--modeltype", "normal") => modelType = "normal"
+        case Array("--modeltype", "quad") => modelType = "quad"
+        case Array("--xmax", xmaxValue: String) => xmax = Some(xmaxValue.toInt)
+        case Array("--xmin", xminValue: String) => xmin = Some(xminValue.toInt)
+        case Array("--ymax", ymaxValue: String) => ymax = Some(ymaxValue.toInt)
+        case Array("--ymin", yminValue: String) => ymin = Some(yminValue.toInt)
+        case Array("--varx", varXName: String) => varx = varXName
+        case Array("--vary", varYName: String) => vary = varYName
+        case Array("--d", dname: String) => dataFilename = dname
+        case Array("--o", iname: String) => imageFilename = iname
+        case _ => println("Could not parse all options.\n" + usage)
+      }
     }
-    
+    catch
+    {
+      case e:Exception =>
+        {
+          println("Problem reading the options")
+          println(e.getMessage)
+          System.exit(1)                  
+        }
+
+    }
     /*
      * Käyttäjä pystyy lataamaan datajoukon valitsemastaan 
      * tiedostosta, joka voi sisältää suurenkin määrän 
