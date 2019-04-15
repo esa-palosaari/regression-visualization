@@ -1,6 +1,7 @@
 package regressionViz
 
 import scala.collection.mutable.ArrayBuffer
+import scala.math.BigDecimal.RoundingMode
 
 abstract class Model (data: Data) 
 {
@@ -22,6 +23,17 @@ abstract class Model (data: Data)
   @throws(classOf[Exception])
   def fitData: Unit
   def equationToString: String
+  
+  // helper method from https://www.baeldung.com/java-round-decimal-number
+  def roundDouble(value: Double, places: Int): Double =
+  {
+    if (places < 0) throw new IllegalArgumentException();
+ 
+    var bd: BigDecimal = BigDecimal.valueOf(value)
+    bd = bd.setScale(places, RoundingMode.HALF_UP)
+    val valueRounded = bd.toDouble
+    return valueRounded
+  }  
   
   def checkAndDeleteMissingRows = 
   {

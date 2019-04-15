@@ -52,13 +52,12 @@ class OLSModel (data: Data) extends Model (data)
    def equationToString: String =
    {
      require(equation.isDefined)
-     var equationString = ""
-     if(equation.get(1) >= 0) 
-       equationString = ""+equation.get(0) +" + "+ equation.get(1)+"x"
-     else
-       equationString = ""+equation.get(0) +" "+ equation.get(1)+"x"
+     val coef = equation.get.map(x => roundDouble(x, 2))
+     val nameY = getFittedData.get.getVarNames.get(1)
+     val nameX = getFittedData.get.getVarNames.get(0)
+     var equationString = nameY+" = "+coef(0) +" + ("+ coef(1) +")"+nameX 
      return equationString
-   }
+   } 
   
   protected def calculateNormalEquation =
   {

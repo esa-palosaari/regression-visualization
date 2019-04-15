@@ -13,11 +13,15 @@ class QuadModel (data: Data) extends Model(data) {
     equation.get(0) + equation.get(1)*x + equation.get(2)*pow(x,2)
   }   
   
+
    def equationToString: String =
    {
      require(equation.isDefined)
-     var equationString = ""+equation.get(0) +" + ("+ equation.get(1)+")x" +
-       "("+equation.get(2)+")x^2"
+     val coef = equation.get.map(x => roundDouble(x, 2))
+     val nameY = getFittedData.get.getVarNames.get(1)
+     val nameX = getFittedData.get.getVarNames.get(0)
+     var equationString = nameY+" = "+ coef(0) +" + ("+ coef(1) +")"+nameX+ 
+                          " + ("+coef(2)+")"+nameX+"^2"
      return equationString
    }  
   

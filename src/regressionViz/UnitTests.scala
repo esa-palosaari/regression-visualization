@@ -145,7 +145,7 @@ class UnitTests {
   // use MaxValue for missing data
   // create data with ((1, 1), (1, Double.NaN))
   // OLSModel should take the row out when fitting a model
-  @Test(expected=classOf[ IllegalArgumentException])
+  @Test(expected=classOf[Exception])
   def OLSModel_should_require_enough_data ()
   {
     val someData = new Data()
@@ -172,7 +172,7 @@ class UnitTests {
         olsModel.getFittedData.isEmpty)
   }
   
-  @Test(expected=classOf[ IllegalArgumentException])
+  @Test(expected=classOf[Exception]) 
   def OLSModel_should_have_listwise_deletion ()
   {
     val someData = new Data()

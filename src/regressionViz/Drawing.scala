@@ -29,7 +29,7 @@ class Drawing (  val model: Model,
   val size = (sizex.getOrElse(500), sizey.getOrElse(500))
   
   // margin
-  val margin = 0.10
+  val margin = 0.15
   
   // plot size X and Y direction
   val plotSizeX = size._1.toDouble*(1.0-(margin*2.0))
@@ -189,10 +189,17 @@ class Drawing (  val model: Model,
 
   // get the order of the variable values
   
+  // write the regression equation
+  g.setColor(new Color(0,0,0)) // set to black
+  g.drawString(  model.equationToString, 
+                 yWidth.toInt, 
+                 ((1.0-0.1*margin)*size._2).toInt
+              )
+              
   // write the names of variables
   g.drawString(  model.getFittedData.get.getVarNames.get(0), 
                  size._1/2, 
-                 ((1.0-0.3*margin)*size._2).toInt
+                 ((1.0-0.4*margin)*size._2).toInt
               )
               
   // rotate string
@@ -255,9 +262,9 @@ class Drawing (  val model: Model,
     xIndex += 1
   }
   
-
   
-  // TODO: write the regression equation
+  
+
   
   g.dispose()
   
