@@ -405,4 +405,36 @@ class UnitTests {
     )
   }
   
+  @Test def Drawing_should_have_correct_extraTicks()
+  {
+    val someData = new Data()
+    someData.initializeDataset(newPoints = Some(Array(Array(1.0, 2.0, 3.0), 
+                                                      Array(-1.0, 2.0, 3.0))))
+    val olsModel = new OLSModel(someData)
+    olsModel.fitData
+    val kuva = new Drawing(  olsModel, 
+                             None, 
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None
+                           )    
+    assertTrue(
+      "extraTicksY should be 1, it is: " + kuva.extraTicksY +
+      "\nlargestTickX should be 3, it is: " + kuva.extraTicksX,
+      
+      kuva.extraTicksY.toInt < 2 &&
+      kuva.extraTicksX.toInt < 4 
+    ) 
+  }
+    
+  
+  
 }

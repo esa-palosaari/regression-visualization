@@ -143,21 +143,17 @@ class Drawing (  val model: Model,
       if(xmax.isDefined)
         0
       else
-      ((plotSizeX - ((abs(maxX - minX)/orderX)*orderX *axisUnit)))/axisUnit
+      (((plotSizeX - ((abs(maxX - minX)/orderX)*orderX *axisUnit)))/axisUnit).toInt
     }
-            
-  println("extraTicksX " + extraTicksX)
 
   val extraTicksY =
     {
       if(ymax.isDefined)
         0
       else
-        ((plotSizeY - (abs(maxY - minY)/orderY)*orderY)*axisUnit)/axisUnit
+        ((plotSizeY - (abs(maxY - minY)/orderY)*orderY*axisUnit)/axisUnit).toInt
     }
-                        
-  println("extraTicksY " + extraTicksY)
-                      
+                 
   // number of axisUnits that "fit" on the coordinate axes
   val numberOfUnitsX = (plotSizeX/axisUnit).floor.toInt
   val numberOfUnitsY = (plotSizeY/axisUnit).floor.toInt
@@ -204,7 +200,7 @@ class Drawing (  val model: Model,
   g.setFont(new Font("Arial", Font.PLAIN, 12))        
   // write the tick numbers on the plot axes
   // numbers to x-axis
-  var index = largestTickX + extraTicksX
+  var index = largestTickX + extraTicksX - 1
   while (index >= smallestTickX)
   {
     g.drawString(  
@@ -215,7 +211,7 @@ class Drawing (  val model: Model,
     index -= orderX
   }
   // numbers to y-axis  
-  index = largestTickY + extraTicksY 
+  index = largestTickY + extraTicksY - 1 
   while (index >= smallestTickY)
   {
     g.drawString(  
