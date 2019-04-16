@@ -1,12 +1,20 @@
 // examples followed: https://stackoverflow.com/questions/2315912/best-way-to-parse-command-line-parameters
 
 /*
- * 	How to compile jar in Eclipse:
+ * 	How to build a JAR in Eclipse:
+ *  0. Have Scala 2.12 installed
+ *  1. Check that the file scala-xml_2.12-1.0.5.jar in on Build Path
+ *  2. Right click regressionViz in Project Explorer
+ *  3. Click "Export"
+ *  4. Choose Java folder
+ *  5. Choose JAR file and click Next
+ *  6. Choose name an location for the JAR file
+ *  7. Click Finish
  * 
- *  How to run the jar file:
- *  Install scala 2.12.3
- *  Install java 8 or later
- *  scala -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:regressionViz.jar" regressionViz.CLIApp [options]   
+ *  How to excute the JAR file:
+ *  1. Install Scala 2.12.3
+ *  2. Install java 8 or later
+ *  3. In shell enter command: scala -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:NameOfTheJARExported.jar" regressionViz.CLIApp [options]   
  */
 package regressionViz
 import java.awt.Color
