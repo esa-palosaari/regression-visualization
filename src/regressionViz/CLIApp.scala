@@ -48,7 +48,11 @@ object CLIApp {
   
   def main(args: Array[String]): Unit =
   {
-    if(args.length == 0) println(usage)
+    if(args.length == 0) 
+    {
+      println(usage)
+      System.exit(1) 
+    }
     val argumentList = args.toList
     
     var dataFilename = ""
