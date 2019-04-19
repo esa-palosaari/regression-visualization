@@ -55,7 +55,7 @@ class Data()
         }  
     }
     
-    // if there are no variable names, add them here
+    // if there are no variable names, makenewVar them here
     def addVariableNames(from: Int, until: Int, createNew: Boolean) = 
     {
       var i = from
