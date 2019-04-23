@@ -1,5 +1,12 @@
 package regressionViz
 
-object GUI extends App {
+import scala.swing._
+import java.awt.Color
+
+object GUI extends SimpleSwingApplication {
   
+  def top = new MainFrame
+  {
+    
+  }
 }
