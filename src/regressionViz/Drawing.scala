@@ -210,7 +210,7 @@ class Drawing (  val model: Model,
     index -= orderX
   }
   // numbers to y-axis  
-  index = largestTickY + extraTicksY - 1 
+  index = largestTickY + extraTicksY   
   while (index >= smallestTickY)
   {
     g.drawString(  
