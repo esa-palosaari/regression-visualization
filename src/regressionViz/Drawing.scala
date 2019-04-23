@@ -196,7 +196,7 @@ class Drawing (  val model: Model,
   )
   
   // write numbers on x- and y-axes
-  g.setFont(new Font("Arial", Font.PLAIN, 12))        
+  g.setFont(new Font("Arial", Font.PLAIN, 10))        
   // write the tick numbers on the plot axes
   // numbers to x-axis
   var index = largestTickX + extraTicksX - 1
