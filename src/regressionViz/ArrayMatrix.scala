@@ -128,9 +128,6 @@ class ArrayMatrix {
       }
     }
     
-//    println("max diagonal: ")
-//    printMatrix(augA)
-    
     // diagonalize the matrix
     for 
     {
@@ -146,8 +143,6 @@ class ArrayMatrix {
       }
     }
     
-//    println("Diagonalizd: ")
-//    printMatrix(augA)
     
     // divide by diagonal
     for (rowIndex <- 0 until size)
@@ -161,8 +156,6 @@ class ArrayMatrix {
       augA(rowIndex)(rowIndex) = augA(rowIndex)(rowIndex)/temporary
     }
     
-//    println("Divided: ")
-//    printMatrix(augA)
     
     // take the inverse out
     var inverseA: Array[Array[Double]] = Array.ofDim(size, size) 

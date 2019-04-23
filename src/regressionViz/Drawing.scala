@@ -1,9 +1,8 @@
 package regressionViz
 
-// trying things out for now
-// using this example: http://otfried.org/scala/drawing.html as the basis
+// using this example for AWT: http://otfried.org/scala/drawing.html
 
-import java.awt.image.BufferedImage
+import java.awt.image	.BufferedImage
 import java.awt.{Graphics2D, Color, Font, BasicStroke}
 import java.awt.geom._
 import scala.math._

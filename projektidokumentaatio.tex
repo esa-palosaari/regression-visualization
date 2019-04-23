@@ -1,0 +1,463 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[finnish]{babel}
+\usepackage{tabto}
+\usepackage{hyperref}
+
+\title{OS2-projektidokumentaatio \\ Regressiomallin visualisointi}
+\author{Esa Palosaari \\ 
+        618573, TiK, vk 2017}
+\date{23.4.2019}
+
+\begin{document}
+
+\maketitle
+
+\section{Yleiskuvaus}
+
+    Tehtävänannon ja suunnitelman mukaisesti olen rakentanut ohjelman, joka sovittaa 
+	regressiomallin datajoukkoon ja visualisoi tulokset. Kyseessä on vaikean tason työ. 
+	Tämä tarkoittaa annettujen kriteerien mukaisesti, että käyttäjä voi ladata datan 
+	valitsemastaan tiedostosta käyttäen kahta tiedostomuotoa (CSV ja XML). Ohjelman 
+	käsittelemät tiedostot sisältävät (x, y) -koordinaattipareja desimaalilukuina 
+	niin, että desimaalierottimena on piste. Ohjelmaa voi pyytää sovittamaan joko 
+	suoran tai paraabelin muotoisen regressiomallin. Ohjelma piirtää kuvaajan 
+	alkuperäisistä datapisteistä ja niihin sovitetusta mallista. Käyttäjä pystyy 
+	säätämään kuvaajan asetuksia. Toteutus on laajennettavissa eli uusien ominaisuuksien 
+	lisääminen ei ole vaikeaa tai vaadi koko ohjelman kirjoittamista uudelleen. 
+	Erityisesti uusia uusia tiedostomuotoja, regressiomalleja ja käyttöliittymiä on 
+	helppo lisätä. Tiedostonlukijasta ja regressiomallista on abstraktit luokat, 
+	joista voi tehdä uusia konkreettisia aliluokkia. Abstraktit luokat määrittelevät 
+	muiden rajapinnat ohjelman muille osille siten, että esimerkiksi uuden 
+	regressiomallityypin regressikäyrien piirtämistä tai kaavan kirjoittamista 
+	varten ei tarvitse muuttaa graafisia luokkia ollenkaan.  
+
+\section{Käyttöohje}
+    \subsection{Ohjelman "kääntäminen" komentoriviltä ajettavaksi}
+    Ohjelman komentorivikäyttöliittymän JAR-tiedosto voidaan tehdä esimerkiksi Eclipsessä:
+    \begin{itemize}
+        \item Klikkaa oikealla näppäimellä pakettia \texttt{regressionViz}
+        \item Valitse "Export..."
+        \item Avaa Java-kansio
+        \item Valitse "JAR file" ja klikkaa "Next"
+        \item Valitse JAR-tiedostolle haluamasi paikka ja nimi 
+        \item Klikkaa "Finish". 
+    \end{itemize}
+
+    Javan versio 8 olisi oltava asennettu. Eclipsessä tulisi olla Scalan versio 2.12.3. 
+	Paketin \texttt{regressionViz} Build Path:ssä tulisi olla scala-xml\_2.12-1.0.x.jar 
+	-tiedosto (se on liitetty mukaan gitiin, libs-hakemistoon). Ohjelman ajamista varten 
+	tulisi komentorivin polussa olla Scalan versio 2.12.3 (ohjeet version asentamiseksi 
+	esimerkiksi Ubuntulle: \\ \url{https://gist.github.com/malzzz/15639fc36d069490b7709be2f3a4d522}). 
+	Käyttä-milläni yliopiston Ubuntu-koneilla Scalan versio komentorivillä oli 2.11.8, 
+	Eclipsessä Scala oli 2.12.2. Scalan päivittäminen ei onnistu ainakaan helposti ilman 
+	root-oikeuksia eikä ohjelma näytä toimivan oikein Scalan versiolla 2.11. Eclipsessä 
+	komentorivitoimintoja voi toteuttaa seuraavalla tavalla:
+
+    \begin{itemize}
+        \item Klikkaa CLIApp.scalaa oikealla napilla ja valitse \texttt{Run As}
+        \item Valitse \texttt{Run Configurations...}
+        \item Kirjoita kohtaan \texttt{Main class:} \texttt{regressionViz.CLIApp}
+        \item Välilehdelle \texttt{Arguments} kohtaan \texttt{Program arguments:} voi 
+		kirjoittaa ohjelman optioita alla olevien ohjeiden mukaan. 
+        \item Kohtaan \texttt{Program arguments:} voi myös kirjoittaa 
+		\texttt{\$\{string\_prompt\}}, jolloin Eclipse antaa ikkunan ohjelman 
+		optioiden kirjoittamiseen joka kerta kun ohjelman käynnistää.
+    \end{itemize}
+    
+    \subsection{Ohjelman käyttäminen komentoriviltä}
+    Komentorivin kautta ohjelma käynnistetään komennolla: \\
+    
+    \texttt{scala -cp "\$\{CLASSPATH\}:\$\{SCALA\_HOME\}/lib/scala-library.jar:} \\
+    \texttt{NameOfTheJARExported.jar" \, regressionViz.CLIApp [options]}
+    \\
+    
+    \texttt{NameOfTheJARExported.jar} on aiemmin valitsemasi nimi JAR-tiedostolle. 
+    
+        Ohjelman ohjeet saa näkyviin kun sen käynnistää ilman mitään optioita: \\
+    
+    \texttt{scala -cp "\$\{CLASSPATH\}:\$\{SCALA\_HOME\}/lib/scala-library.jar:} \\
+    \texttt{NameOfTheJARExported.jar" \, regressionViz.CLIApp}
+    \\
+        
+    Ohjeet kertovat mitä ja miten parametreja ohjelmalle voi käynnistysoptioiden 
+	avulla antaa. Tässä käynnistysoptiot ja niiden selitykset: 
+    
+    \begin{itemize}
+        \item \texttt{--d} Datatiedoston polku ja tiedostonnimi. Vaaditaan ohjelman 
+		toimimiseksi. Nimen on päätyttävä joko .csv tai .xml. Kohdassa 6 kuvataan 
+		datatiedostojen hyväksyttävät muodot.
+        \item \texttt{--o} Polku ja nimi tallennettavalle PNG-kuvatiedostolle. Vaaditaan.
+        \item \texttt{--varx} Ensimmäisen, selittävän muuttujan nimi. Tämä optio 
+		vaaditaan vain XML-tiedoston käytön yhteydessä, jolloin sen on oltava sama 
+		kuin XML-tiedostossa olevan muuttujan nimi. CSV-tiedostojen kanssa se on 
+		valinnainen. Nimeä käytetään visualisaatiossa.
+        \item \texttt{--vary} Toisen, selitettävän muttujan nimi. Vaaditaan 
+		XML-tiedoston käytön yhteydessä, jolloin se  on oltava sama kuin 
+		XML-tiedostossa olevan selitettävän muuttujan nimi.
+        \item \texttt{--sizex} Kuvan vaakasuora koko pikseleinä. Jos optiota 
+		ei anneta, käyttää ohjelma oletusarvoa on 500.
+        \item \texttt{--sizey} Kuvan pystysuora koko pikseleinä. Jos optiota ei 
+		anneta, käyttää ohjelma oletusarvoa on 500.        
+        \item \texttt{--xmax} Vaakasuoran akselin suurin arvo. Oletuksena on 
+		suurin ensimmäisen muuttujan arvo + yksi akselilla käytettävän suuruusluokan yksikkö.
+        \item \texttt{--xmin} Vaakasuoran akselin pienin arvo. Oletuksena on 
+		pienin ensimmäisen muuttujan arvo - yksi akselilla käytettävän suuruusluokan yksikkö.
+        \item \texttt{--ymax} Pystysuoran akselin suurin arvo. Oletuksena on 
+		suurin toisen muuttujan tai regressiokäyrän arvo suurimmalla ensimmäisen 
+		muuttujan arvolla + yksi akselilla käytettävän suuruusluokan yksikkö.
+        \item \texttt{--ymin} Pystysuoran akselin pienin arvo. Oletuksena on pienin 
+		toisen muuttujan tai regressiokäyrän arvo pienimmällä ensimmäisen muuttujan 
+		arvolla - yksi akselilla käytettävän suuruusluokan yksikkö.
+        \item \texttt{--pR} Datapisteiden RBG-värin Red-arvo (0-255). Oletuksena 255.
+        \item \texttt{--pB} Datapisteiden RBG-värin Blue-arvo (0-255). Oletuksena 0.
+        \item \texttt{--pG} Datapisteiden RBG-värin Green-arvo (0-255). Oletuksena 0.
+        \item \texttt{--cR} Regressiokäyrän RBG-värin Red-arvo (0-255). Oletuksena 0.
+        \item \texttt{--cB} Regressiokäyrän RBG-värin Blue-arvo (0-255). Oletuksena 255.
+        \item \texttt{--cG} Regressiokäyrän RBG-värin Green-arvo (0-255). Oletuksena 0.
+        
+    \end{itemize}
+    
+	Ohjelma osaa tällä hetkellä skaalata vaaka- ja pystyakselin asteikkoja ylöspäin 
+	kertaluokasta \(10^0\),	mutta ei alaspäin. Jos kaikki muuttujan arvot ovat kertaluokkaa 
+	\(10^{-1}\) tai pienempiä, datatiedostossa olevat arvot tulee korottaa muualla siten
+	että muuttujan kertaluokka on vähintään \(10^0\).
+	
+	Tällä hetkellä ohjelma käyttää sekä pysty- että vaaka-akselin mitta-asteikkona samaa
+	pikselimäärää. Eli jos vaaka-akselilla etäisyyteen 1.0 mahtuu 10 pikseliä, myös pysty-
+	akselilla etäisyyteen 1.0 mahtuu 10 pikseliä. Tämä auttanee tulkitsemaan kuvaajia
+	monissa kohdissa, mutta toisissa taas vaikeuttaa. Se myös rajoittaa, miten paljon
+	akseleilta voi jättää piirtämättä, mikä voi johtaa rumiin kuviin.
+
+\section{Ohjelman rakenne}
+
+    \subsection{Ohjelman luokat ja niiden tehtävät}
+    Ohjelman luokat jakautuvat tehtävien mukaan datan lukemiseen tiedostosta 
+	(\texttt{DataReader, CSVReader, XMLReader}), datan liittyvään informaation säilyt-
+	tämiseen (\texttt{Data}), regressiomallin sovittamiseen (\texttt{Model, OLSModel, QuadModel}) 
+	ja sovittamisessa käytettäviin matriisioperaatiohin 
+	(\texttt{ArrayMatrix}), visualisoinnin piirtä-miseen (\texttt{Drawing}, ja ohjelman 
+	tehtävien suorittamiseen kaikkien luokkien avulla ja käyttäjän käskyjen mukaisesti 
+	(\texttt{Engine, CLIApp}). Yksikkötestejä varten on oma luokkansa.
+    
+    Luokkarakenteessa on ollut keskeistä jatkokehityksen ja lisäominaisuuksien lisäämisen helppous. Sen vuoksi datan lukemisesta ja regressiomallin sovittamisesta on abstraktit luokat, joiden rajapinta-ominaisuuksia toteuttavia uusia luokkia on helppo lisätä ohjelmaan. Samoin käyttöliittymiä voi lisätä ja muuttaa ilman että koko ohjelmaa pitää kirjoittaa uusiksi, koska usea käyttöliittymä voi säilyttää olioita ja käyttää niiden toimintoja \texttt{Engine}-luokassa. Se voisi mahdollistaa myös useamman samanaikaisen näkymän ja käyttäjän ohjelmalle. Jos ei olisi ajatusta muuttaa tai lisätä ominaisuuksia ohjelmaan, voisi päästä vähemmällä kirjoittamisella poistamalla abstraktit luokat ja ottamalla toimintalogiikka ja olioiden säilytys osaksi käyttöliittymäluokkaa.
+    
+    \subsection{Luokkien keskeiset metodit}
+    \begin{itemize}
+        \item \texttt{DataReader readFile(filename: String): Option[Data]} Kaikki 
+		DataReaderin perivät luokat (\texttt{CSVReader, XMLReader}) toteuttavat tämän 
+		metodin, jolle annetaan tiedoston nimi, ja joka palauttaa Data-luokan olion 
+		Optioniin käärittynä. Metodi siis lukee annetusta tiedostosta numeroarvot ja 
+		tallentaa ne Data-olioon.
+        \item \texttt{Data initializeDataset(newPoints, newName, newVarNames)} Metodin 
+		avulla voi vaihtaa Data-olion datapisteitä, nimeä ja muuttujien nimiä. Näillä 
+		Data-olion muuttujilla on oletusarvot, eikä kaikkia muuttujia tarvitse muuttaa 
+		samalla kertaa. 
+        \item \texttt{Data getPoints, getVarNames} palauttavat Optioniin käärittynä 
+		Double-muotoiset datapisteet kaksiulotteisessa taulukossa ja Optioniin käärityn 
+		ArrayBufferin muttujien nimiä.
+        \item \texttt{Model fitData: Unit} sovittaa Model-luokan perivissä luokissa 
+		(\texttt{OLSModel, QuadModel}) regressiomallin konstruktorissa annetun Data-olion 
+		datapisteisiin. Sovitetun mallin, yhtälön ja yhtälön arvon voi saada omilla 
+		getterimetodeilla.
+		\item \texttt{ArrayMatrix multiplyMatrixAndVector} kertoo sopivan ulotteisen
+		matriisin vektorilla vasemmalta ja palauttaa Double-tyyppisen vektorin.
+		\item \texttt{ArrayMatrix multiplyMatrices} kertoo kaksi sopivan ulotteista
+		matriisia keskenään ja palauttaa Double-tyyppisen matriisin.
+		\item \texttt{ArrayMatrix invertMatrix} kääntää ja palauttaa neliömatriisin
+		käänteismatriisin. Metodi olettaa että matriisi on kääntyvä.
+		\item \texttt{Engine readData} lukee parametrina annetun datatiedoston tiedot
+		käyttäen tiedoston päätteen mukaista lukijaa ja tallentaa osoittimen Data-olioon
+		Engine-olion kokoelmamuuttujaan. Metodin parametreina annetut muuttujien nimet tallennetaan
+		Data-olioihin.
+		\item \texttt{Engine fitModel} sovittaa parametrina annettuun Data-olioon parametrina
+		annetun tyyppisen regressiomallin. Viittaus Model-olioon lisätään Engine-olion
+		kokoelmamuuttujaan.
+		\item \texttt{Engine drawImage} luo annettujen parametrien mukaisen Drawing-olion
+		ja lisää viittauksen siihen Engine-olion kokelmamuuttujaan. Ainoa vaadittu parametri
+		on viittaus Model-olioon. Muut parametrit voivat olla None-tyyppejä.
+		\item \texttt{Engine saveImage} tallentaa parametrina annetun Drawing-olion mukaisen
+		kuvan PNG-formaatissa parametrina annetun nimiseen tiedostoon.
+		\item \texttt{CLIApp main} parsii ohjelman kutsussa annetut optiot ja kutsuu Engine-olion
+		metodeja annettujen parametrien ja arvojen mukaan.
+		
+    \end{itemize}
+    
+    
+
+\section{Algoritmit}
+    
+    Pienimmmän neliösumman menetelmässä tavallisen regressioyhtälön ratkaisuun käytettiin 
+	normaaliyhtälön kaavaa (Ordinary Least Squares, Wikipedia). Kaavalla laskemiseen kuului matriisien ja vektorien kertolaskuja ja transpooseja. Vaikein laskentatehtävä oli käänteismatriisin laskeminen, joka tapahtui Gauss-Jordan -menetelmällä (ks. Viitteet).
+	
+	Regressioyhtälön ja käänteismatriisin olisi voinut laskea muilla menetelmillä. Käytin
+	tässä yksinkertaisimpia oppimisen ja ajankäytön vuoksi.
+
+\section{Tietorakenteet}
+
+	Ohjelmassa käytettävät tietorakenteet ovat joko yksi- tai kaksiulotteisia Arrayta ja 
+	ArrayBuffereita. Yksi- ja kaksiulotteiset Arrayt ovat datapisteiden varastointia ja 
+	käsittelyä varten silloin kun niiden koko tiedetään. Arrayt ovat nopeita ja yleisesti
+	käytettyjä rakenteita varsinkin vektoreiden ja matriisien esittämiseen ja manipulointiin.
+	ArrayBuffereita käytän silloin kun kokoelman koko muuttuu tai saattaa muuttua. Arrayn
+	kokoa on hankalampi ja tehottomampi muuttaa kuin ArrayBufferin. Käytän lähinnä 
+	muuttuvatilaisia rakenteita, koska en vielä hallitse funktionaalista tyyliä tarpeeksi
+	hyvin. Javamaisempi tyyli (muuttuvatilaisia, mutta mahdollisesti yksityisiä rakenteita,
+	joihin pääsee gettereillä ja settereillä) tuntuu vielä helpommalta eikä liian ongelmalliselta.
+	
+	Olisi varmaan voinut käyttää funktionaalisempaa tapaa muuttumattomine rakenteineen.
+	Olisi myös voinut pärjätä yksiulotteisilla Arraylla, joiden rivit olisi voinut laskea
+	moduloa käyttäen, mutta kaksiulotteisten taulukoiden hieman korkeampi abstraktitaso auttoi
+	nyt ajattelemaan paremmin. Yksiulotteisilla taulukoilla voinee tiristää jotain tehokkuutta
+	jatkossa jos haluaa.
+    
+
+\section{Tiedostot ja verkossa oleva tieto}
+
+    Ohjelmalla käyttäjä voi sovittaa kahden muuttujan regressiomallin ja tallentaa datan ja 
+	regressiomallin visualisaation PNG-tiedostoon. Muuttujien arvot annetaan tiedostoissa, 
+	jotka ovat joko CSV (Comma Separated Variables) tai XML (Extensible Markup Language) 
+	-muotoisia. CSV-tiedostoissa numeroiden desimaalierottimena on piste ja numerot erotetaan 
+	toisistaan pilkulla. Eri muuttujien arvot ovat omissa sarakkeissa. Numerot voivat olla 
+	tiedostossa esimerkiksi seuraavalla tavalla: \\
+    
+    \texttt{1.2, -3.43}
+    
+    \texttt{3.123, 2.3423}
+    
+    \texttt{4, 3.0} \\
+    
+    XML-tiedostoissa muttujien \texttt{PE} ja \texttt{MarketCap} arvot voidaan esittää esimerkiksi seuraavalla tavalla: \\
+    
+    \texttt{
+    <?xml version="1.0"?> \\
+    <symbols> \\
+\tab{   <symbol ticker="Cisco" \,> \\
+     \tab  \tab{     <PE>21.65</PE>} \\
+      \tab \tab{     <MarketCap>271.18</MarketCap>} \\
+        \tab{</symbol>} \\
+    \tab{<symbol ticker="Sandisk"\,> \\
+       \tab \tab{    <PE>23.71</PE>} \\
+        \tab \tab{    <MarketCap>15.53873</MarketCap>} \\
+        </symbol>} \\
+        <symbol ticker="Oracle"\,> \\
+    \tab   \tab{     <PE>17.87</PE>} \\
+    \tab    \tab{    <MarketCap>225.61</MarketCap> }\\
+        </symbol> \\
+        <symbol ticker="Red Hat"\,> \\
+    \tab    \tab{    <PE>65.41</PE>} \\
+    \tab    \tab{    <MarketCap>32.24</MarketCap>} \\
+        </symbol> }\\
+    </symbols>\\
+    }
+    
+    Datatiedostoissa ei saa olla puuttuvia tietoja (eli tyhjiä kohtia) tai datana muuta kuin numeroita. 
+	CSV-tiedoston ensimmäisen rivin mahdolliset muuttujien nimet on poistettava ennen tiedoston lukemista 
+	ohjelmalla. Ohjelma tunnistaa datatiedoston muodon sen päätteestä (.csv tai .xml). Jos tiedoston 
+	lukemisessa on ongelmia, kannattaa tarkistaa ettei datatiedostoissa ole mukana ylimääräisiä "näkymättömiä"
+	merkkejä kuten tabulaattoreita. Tämä vaikutti aiheuttavan ongelmia CSV-muotoisessa testitiedostossa
+	yliopiston koneella.
+    
+\section{Testaus}
+
+    Ohjelmaa testattiin heti alusta yksikkötestein. Yksikkötestit kirjoitettiin ennen varsinaista 
+	ohjelmakoodia, ja testien tuli ensin ilmoittaa virheestä. \texttt{Drawing}-luokan joitain
+	metodeita testattiin yksikkötestein, 
+	mutta pääasiallinen testaustapa oli vain katsoa kuvia
+	joita luokka tuotti ja verrata niitä haluttuihin kuvaajiin. Komentorivityökalua ja Engine-
+	luokkaa testattiin myös lähinnä kokeilemalla niitä. 
+	
+	Suunnitelmassa mainituista testeistä ohjelma läpäisee sen, että regressioyhtälö
+	palauttaa oikeat arvot virherajojen puitteissa kun syötteenä on ennalta tunnettuja
+	datoja. En ole keskittynyt testeissä algoritmin virhealttiuteen enkä siihen, miten
+	täydellinen lineaarinen riippuvuus vaikuttaa. Datan lukeminen näyttää toimivan
+	suunnitellusti, mutta yliopiston koneessa oli jokin yllättävä ongelma, minkä syy
+	ei täysin selvinnyt. Puuttuvien tietojen käsittely ei näyttänyt toimivan niin
+	kuin ajattelin, minkä takia jätin sen ajanpuutteen vuoksi lopulta vain pois.
+	
+	Komentorivikäyttöliittymän omilla silmillä testaamiset ohjelma näyttää läpäisevän.
+
+\section{Ohjelman tunnetut puutteet ja viat}
+
+	\begin{itemize}
+		\item Akseliyksiköt ovat samat mikä voi olla ongelma, kun kertaluokat ovat erit tai pitää saada
+		\item pystyakselin yksiköt eivät lähde nollasta isoilla numeroilla
+		\item pysty- ja vaaka-akselin automaattinen sovitus tuottaa välillä liialta näyttävää ylimääräistä
+	  tilaa
+		\item puuttuvan tiedon käsittely eli sellaisten rivien poisto, joista toisesta muuttujasta
+	  puuttui tieto, ei toiminut
+		\item skaalaus alaspäin ei toimi, pienin numero akseleilla on yksi. Tämä liittynee kokonaislukuihin.
+		\item numeroiden mahtuminen akseleille, kun mennään suureen määrään numeroita per akseli
+	\end{itemize}
+	
+\section{3 parasta ja 3 heikointa kohtaa}     
+
+	\subsection{3 parasta kohtaa}
+	\begin{itemize}
+		\item Regressiomallin sovittamisen toimivuus. Regressiomallin estimointi normaaliyhtälöllä
+			  vaikuttaa toimivan täsmälleen kuten pitääkin. Tuntui melkein taikuudelta,
+			  että ohjelma osasi sovittaa oikean toisen asteen käyrän vain viiden datapisteen 
+			  perusteella. Normaaliyhtälöä on myös helppo laajentaa korkeamman asteen polynomeihin.
+			  Ohjelmaan ei olisi kovin vaikeata lisätä ominaisuutta, jossa sille annettaisiin vain
+			  luku nollasta n:ään regressioyhtälön asteesta ja ohjelma sovittaisi halutun asteen
+			  polynomin.
+		\item Kuvaajan oikeellisuus. Vaikka kuvaajan visuaalisten apukeinojen, erityisesti akseleiden
+			  lukujen automatiikassa on parannettavaa, kuvaajat näyttävät olevan "matemaattisesti"
+			  tosia. Toisin sanoen, pisteet, origosta lähtevät apuakselit ja regressiokäyrä ovat
+			  teknisesti oikeissa suhteissa toisiinsa (mittausvirheen ja pikseleiden rajoissa). 
+		 \item Ohjelman rakenne ja laajennettavuus. Ohjelman rakenne on mielestäni selkeä: Luokat vastaavat
+                   kukin yhdestä pääasiasta ja ne sisältävät tehtävään tarvittavan datan ja menetelmät.
+                   Luokkien keskittyminen omaan asiaansa ja abstraktien luokkien käyttö tekevät ohjelman
+                   laajentamisesta helppoa. Uuden käyttöliittymän lisääminen ei vaadi koskemista
+                   muuhun ohjelmaan. Erilaisia regressiomalleja tai luettavia tiedostomuotoja voi lisätä
+                   mielivaltaisen määrän kirjoittamalla niille abstraktin luokan mukaiset toteutukset
+                   ja niitä vastaavat kutsut Engine-luokkaan.
+                  
+	\end{itemize}
+	
+	\subsection{3 heikointa kohtaa}
+	\begin{itemize}
+		\item Vaaka- ja pystyakselin koon automaattinen määritys voi tuottaa epäesteettisiä eli rumia
+			  lopputuloksia. Automatiikkaa voisi hienosäätää paremmaksi näpräilemällä lisää pikselien sekä
+			  akseleiden ja yksiköiden skaalojen kanssa. Suuren osan epäesteettisyyksistä
+			  voi korjata ohjelmalle annetuilla parametreilla, mutta parametreilla ei voi tällä hetkellä
+			  muuttaa kaikkia kohtia. Esimerkiksi kummallekin akselille saman suuruinen numeerinen
+			  etäisyys tarkoittaa saman suuruista pikselimäärää. Omat yksiköt eri akseleille tuottavat
+			  uusia ongelmia, mutta niitä voisi ratkoa ja antaa käyttäjälle mahdollisuuksia säätää
+			  akseleiden yksiköiden pikselimäärää.
+		\item Käyttöliittymä. Tätä kirjoittaessa komentorivityökalukäyttöliittymä ei ole kovin kummoinen. Se
+                      sopii parhaiten tilanteisiin tai työ, joissa käytetään muita vastaavia komentorivityökaluja.
+		\item Käynnistämisen hankaluus. Komentorivityökalun käynnistäminen eri koneilla, joilla on erilaisia
+                      Scalan versioita on epävarmaa ja hankalaa.
+	\end{itemize}
+
+\section{Poikkeamat suunnitelmasta, toteutunut työjärjestys ja aikataulu}
+
+        Viikkojen 7 ja 8 aikana tein ja demosin suunnitelmat kuten olin suunnitellutkin. Gitin olin
+        saanut toimimaan 27.2. eli viikolla yhdeksän kuten olin suunnitellut. Aloitin Data-
+        luokan kirjoittamisesta, jota tein yksikkötestien kanssa 27.2.-7.3. En ollut laittanut
+        suunnitelmaan yhtään aikaa Data-luokan tekemiselle, mutta siinä menikin viikko. Model ja
+        OLSModel-luokkia tein 7.3.-15.3. Tässä vaiheessa olin viikon myöhässä aikataulusta.
+        Tein jossain välissä projektidokumentaation pohjan kuten olin suunnitellut. Suunnitelmastani
+        puuttui kokonaan Drawing-luokka, joka osoittautui yhdestä tärkeimmistä ja vaikeimmista
+        ohjelman osista. Tein sitä 18.3.-21.3, 4.4., 11.-12.4., 15.-16.4. Drawing-luokka jäi
+        suunnitelmasta pois varmaankin sen vuoksi, etten ollut ratkaissut suunnitelmaa tehdessäni
+        miten toteuttaisin varsinaisen piirtämisen.
+        Aloitin datan lukemisen testaamisen ja kirjoittamisen 21.-26.3. Tällöin oli siis viikko 13,
+        kun alkuperäisen suunnitelman mukaan olisi pitänyt olla viikko 11. Komentorivin
+        (\texttt{CLIApp}) ja Engine-luokan ohjelmointi tapahtui noin 26.3.-11.4. (viikot 13-15).
+        Alkuperäisen suunnitelman mukaan tällöin olisi pitänyt tehdä graafinen käyttöliittymä
+        ja viimeistellä koodia. Lisäsin toisen asteen regressiopolynomin ohjelmaan 13.4.
+        (\texttt{QuadModel}). XMLReader-luokan tein 14.4.
+
+        Toteuttamisjärjestys toteutui pääpiirteissään, mutta eritysesti Data- ja Drawing-luokkiin
+        meni huomattavan paljon aikaa eivätkä ne olleet alkuperäisessä suunnitelmassa mukana.
+        Myös ohjelman saaminen toimimaan komentoriviltä vei enemmän aikaa kuin mitä odotin
+        aiempien C ja C++ -kokemusteni perusteella.
+
+        Alussa tein yleensä noin 10 tuntia viikossa, tenttiviikon aikoihin vähemmän ja lopussa
+        enemmän. Tein yhteensä vähemmän kuin suunnitelin, koska muut opinnot ja työt söivät aikaa.
+        Varasin työlle puskuriaikaa, koska arvelin että yllättäviä asioita tapahtuu. Näin kävikin.
+        Jälkikäteen arvioituna käytin alussa liikaa aikaa toisarvoisten ominaisuuksien kuten
+        puuttuvien tietojen käsittelyn hiomiseen.
+        
+\section{Kokonaisarvio lopputuloksesta}    
+
+        Ohjelma täyttää vaatimukset: se lukee kahdenlaisia datatiedostoja, sovittaa niihin
+        kahdenlaisia regressiomalleja, ja lopuksi tuottaa malleista visualisoinnin, jonka
+        yksityiskohtiin käyttäjä voi vaikuttaa ja jonka voi tallentaa tiedostoon. Ohjelmaan
+        voi helposti lisätä uusia ominaisuuksia tai muuttaa luokkien toteutuksia ilman että
+        koko ohjelmaa pitäisi kirjoittaa uudelleen. Uusien regressiomallien ja tiedostomuotojen
+        lisäksi erilaisten käyttöliittymien lisääminen pitäisi olla kivutonta. Käyttölogiikkaa
+        (\texttt{Engine}) olen rakentanut niin, että käyttöliittymissä on esimerkiksi
+        mahdollista käyttää undo- ja redo-toimintoja.
+
+        Huonot puolet liittyvät tällä hetkellä visualisoinnin yksityiskohtiin ja niin sanottuun
+        käyttöliittymään. Eri skaalat pysty- ja vaaka-akselilla johtavat helposti rumiin
+        kuviin vaikka kuvat olisivatkin sinänsä paikkansa pitäviä. Asiaan voisi vaikuttaa
+        mahdollistamalla eri pikselimäärät samoille yksiköille pysty- ja vaaka-akselilla.
+
+        Akseleiden skaalaus kokonaisluvuista alaspäin eli numeron kymmenen negatiiviisiin potensseihin
+        ei myöskään tällä hetkellä toimi, minkä kiertämiseksi hyvin pieniä lukuja sisältäviä
+        datatiedostoja tulisi käsitellä etukäteen ennen niiden syöttämistä ohjelmalle. Asiaa
+        voisi lähteä korjaamaan esimerkiksi vaihtamalla akseleiden yksiköt kokonaisluvuista
+        liukuluvuiksi.
+
+        Akseleiden pituudet voisivat vastata paremmin annettuja päätepisteitä regressiokäyrälle.
+        Ohjelmalle voisi tehdä graafisen käyttöliittymän. Minua kiinnostaisi lisätä ohjelmaan
+        mahdollisuus saada datapisteiden tiedot näkyviin kun niiden päälle vie hiiren kursorin.
+        Eniten minua kuitenkin kiinnostaa taustalla olevan matematiikan parantaminen. Käytetty
+        normaaliyhtälö on yksinkertaisin menetelmä regressikertoimien laskemiseen, mutta se on
+        myös virhealtis. Aion ohjelmoida muita algoritmeja. Aion myös ohjelmoida p-arvojen
+        laskemisen regressioyhtälön kertoimille, sekä epävarmuuden kuten luottamusvälien
+        visualisointeja.
+
+        Olen tyytyväinen tietorakenteisiin ja luokkajakoon. Ohjelma on helposti laajennettavissa
+        ja muutettavissa.
+
+        Jos aloittaisin projektin nyt uudelleen alusta, en käyttäisi niin paljoa yksityiskohtien
+        tai ei-tarpeellisten ominaisuuksien hiomiseen kuin mitä nyt tein alussa. Yrittäisin
+        sen sijaan toteuttaa ensin toimivan rungon, johon voisi lisätä ominaisuuksia käytettävissä
+        olevan ajan mukaan. Siihen suuntaan aloin projekin loppua kohti mennä. 
+
+\section{Viitteet}    
+
+        Algorithm to round to the next order of magnitude in R. Stack Overflow.
+        [Viitattu 23.4.2019]. \\
+        \url{https://stackoverflow.com/questions/7906996/algorithm-to-round-to-the-next-order-of-magnitude-in-r} \\
+
+        Best way to parse command-line parameters? Stack Overflow. [Viitattu 23.4.2019]. \\ 
+        \url{https://stackoverflow.com/questions/2315912/best-way-to-parse-command-line-parameters} \\
+
+        Drawing images. Otfried Cheong. [Viitattu 23.4.2019]. \\
+        \url{http://otfried.org/scala/drawing.html} \\        
+        
+        How to process a CSV file in Scala. Alvin Alexander. [Viitattu 23.4.2019]. \\
+        \url{https://alvinalexander.com/scala/csv-file-how-to-process-open-read-parse-in-scala} \\
+
+        How to rotate text with Graphics2D in Java? Stack Overflow. [Viitattu 23.4.2019]. \\
+        \url{https://stackoverflow.com/questions/10083913/how-to-rotate-text-with-graphics2d-in-java} \\
+
+        Inverse Matrix by Gauss Jordan Elimination. Java Programming Lab Code. [Viitattu 23.4.2019]. \\
+        \url{http://cljavacode.blogspot.com/2017/06/inverse-matrix-by-gauss-jordan.html} \\
+
+        Ohjelmointistudio 2. Aalto-yliopisto. [Viitattu 23.4.2019]. \\
+        \url{https://plus.cs.hut.fi/studio\_2/k2019/} \\
+
+        Ordinary Least Squares. Wikipedia. [Viitattu 23.4.2019]. \\
+        \url{https://en.wikipedia.org/wiki/Ordinary\_least\_squares} \\
+
+        Working With XML in Scala. Mahesh Chand. [Viitattu 23.4.2019]. \\
+        \url{https://dzone.com/articles/working-with-xml-in-scala} \\
+
+\section{Liitteet}    
+
+        \subsection{Liite 1: Lähdekoodi}
+        Lähdekoodi on saatavilla kokonaisuudessaan osoitteesta: \\
+        \url{https://version.aalto.fi/gitlab/palosae2/regression-visualization}
+
+        \subsection{Liite 2: Ajoesimerkkejä}
+        Ohjelma lukee CSV-tiedoston ja käyttää oletusregressiomallia (ensimmäisen asteen yhtälö)
+        ja visualisoinnin oletuasarvoja:\\
+
+  \texttt{scala -cp "\$\{CLASSPATH\}:\$\{SCALA\_HOME\}/lib/scala-library.jar:} \\
+  \texttt{NameOfTheJARExported.jar" \, regressionViz.CLIApp --d datatiedosto.csv} \\
+  \texttt{--o kuvatiedosto.png} \\
+
+  Ohjelma lukee XML-tiedostosta muuttujat varName1 ja varName2 ja sovittaa toisen asteen yhtälön datapisteisiin: \\
+
+  \texttt{scala -cp "\$\{CLASSPATH\}:\$\{SCALA\_HOME\}/lib/scala-library.jar:} \\
+  \texttt{NameOfTheJARExported.jar" \, regressionViz.CLIApp --d datatiedosto.xml} \\
+  \texttt{--o kuvatiedosto.png --modeltype quad --varx varName1 --vary varName2}\\
+
+  Ohjelma lukee CSV-tiedoston; sovittaa toisen asteen yhtälön; antaa nimet muuttujille; tekee kuvaajan,
+  jonka koko on 600x600 pikseliä; rajoittaa kuvaajan vaaka-akselin välille (-1, 5); ja värjää
+  datapisteet keltaisiksi. Regressiokäyrän väri ja y-akselin väli ovat oletuksen mukaisia: \\
+
+  \texttt{scala -cp "\$\{CLASSPATH\}:\$\{SCALA\_HOME\}/lib/scala-library.jar:} \\
+  \texttt{NameOfTheJARExported.jar" \, regressionViz.CLIApp --d datatiedosto.csv} \\
+  \texttt{--o kuvatiedosto.png --modeltype quad --varx X --vary Y --sizex 600 --sizey 600}
+  \texttt{--xmin -1 --xmax 5 --pR 255 --pB 215 --pG 20}
+      
+        
+\end{document}
