@@ -36,11 +36,20 @@ class Engine {
               val csvReader = new CSVReader(var1Name.getOrElse(""),
                                          var2Name.getOrElse("")
                                          )
-              val csvData = csvReader.readFile(fileName)
-              if(csvData.isEmpty)
-                throw new Exception("Reading data from file " +fileName+ " failed.")
-              data += csvData.get
-            }            
+              try
+              {
+                val csvData = csvReader.readFile(fileName)
+                if(csvData.isEmpty)
+                  throw new Exception("Reading data from file " +fileName+ " failed.")
+                data += csvData.get
+              }
+              catch
+              {
+                case e: Exception => throw e
+              }
+              
+            }
+            else new Exception("Wrong file type.") 
            }
       }
 
