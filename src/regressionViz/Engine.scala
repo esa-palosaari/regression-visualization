@@ -49,7 +49,7 @@ class Engine {
               }
               
             }
-            else new Exception("Wrong file type.") 
+            else throw new Exception("Wrong file type.") 
            }
       }
 

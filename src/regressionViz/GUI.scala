@@ -96,6 +96,7 @@ object GUI extends SimpleSwingApplication {
                 {
                   messagePanel.text_=(e.getMessage)
                   messagePanel.background = Color.red
+                  throw e
                 }                
               }
             }
