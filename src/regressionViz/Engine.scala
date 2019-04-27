@@ -29,9 +29,7 @@ class Engine {
               if (xmlData.isEmpty)
                 throw new Exception("Reading data from file " + fileName + " failed.")
               data += xmlData.get
-            }
-      
-            if (fileName.toLowerCase.endsWith(".csv"))
+            } else if (fileName.toLowerCase.endsWith(".csv"))
             {
               val csvReader = new CSVReader(var1Name.getOrElse(""),
                                          var2Name.getOrElse("")
