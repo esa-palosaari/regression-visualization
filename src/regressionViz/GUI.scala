@@ -189,11 +189,12 @@ object GUI extends SimpleSwingApplication {
       case ButtonClicked(component) if component == modelFitButton =>
         try
         {
-          
-          engine.fitModel(modelType, engine.data(0))
+          val nData = engine.data.length
+          engine.fitModel(modelType, engine.data(nData-1))
           messagePanel.text_=("" + modelType + " fitted sucessfully")
+          val nModels = engine.models.length
           messagePanel.background = Color.green      
-          engine.drawImage(engine.models(0),
+          engine.drawImage(engine.models(nModels-1),
                           sizex,
                           sizey,
                           xmax,
