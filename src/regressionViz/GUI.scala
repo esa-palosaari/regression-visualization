@@ -116,7 +116,7 @@ object GUI extends SimpleSwingApplication {
       override def paintComponent(g: Graphics2D) =
       {
         val n = engine.visuals.length
-        if (n > 0) g.drawImage(engine.visuals(n).canvas, 0, 0, null)
+        if (n > 0) g.drawImage(engine.visuals(n-1).canvas, 0, 0, null)
       }
       
     }
