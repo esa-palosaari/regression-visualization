@@ -18,6 +18,7 @@ object GUI extends SimpleSwingApplication {
   def top = new MainFrame
   {
     title = "Regression visualization"
+    var modelType = ""
     
     // error/success messages
     val messagePanel = new TextArea
@@ -44,15 +45,57 @@ object GUI extends SimpleSwingApplication {
     val firstVarField = new TextField("First variable")
     val secondVarField = new TextField("Second variable")
     
+    // choose model 
+    val modelButtons = new ButtonGroup
+    val lineModelButton = new RadioButton("First order OLS model")
+    val quadModelButton = new RadioButton("Second order polynomial OLS model")
+    modelButtons.buttons += lineModelButton
+    modelButtons.buttons += quadModelButton
+    
+    class selectLinear extends Action("Linear model")
+    {
+      def apply() =
+      {
+        modelType = "linear"
+      }
+    }
+    
+    val selectLinearModel = new selectLinear
+    lineModelButton.action_=(selectLinearModel)
+    
+    class selectQuadratic extends Action("Quadratic model")
+    {
+      def apply() =
+      {
+        modelType = "quad"
+      }
+    }
+    
+    val selectQuadraticModel = new selectQuadratic
+    quadModelButton.action_=(selectQuadraticModel)    
+
+    // button to fit a model (and draw the results)
+    val modelFitButton = new Button
+    {
+      text = "Fit the model to the data"
+      foreground = Color.blue
+      background = Color.white
+      borderPainted = true 
+      enabled = true
+    }    
+    
     // input box for image filename    
     
     // Panel for controls
-    val gridPanel = new GridPanel(4,1)
+    val gridPanel = new GridPanel(6,1)
     {
       contents += dataField
       contents += firstVarField
       contents += secondVarField
       contents += dataLoadButton
+      contents += lineModelButton
+      contents += quadModelButton
+      contents += modelFitButton
     }
     
     contents = new BorderPanel
@@ -67,6 +110,7 @@ object GUI extends SimpleSwingApplication {
     foreground = Color.WHITE
     
     listenTo(dataLoadButton)
+    listenTo(modelFitButton)
     
     reactions += 
     {
@@ -116,16 +160,28 @@ object GUI extends SimpleSwingApplication {
             messagePanel.background = Color.red
           }
         }
+      case ButtonClicked(component) if component == modelFitButton =>
+        try
+        {
+          engine.fitModel(modelType, engine.data(0))
+          messagePanel.text_=("" + modelType + " fitted sucessfully")
+          messagePanel.background = Color.green          
+        }
+        catch
+        {
+          case e: Exception =>
+            {
+              messagePanel.text_=(e.getMessage)
+              messagePanel.background = Color.red
+            }
+        }
     }
   }
   
 
-  
 
   
   // button for writing an image
-  
-  // choose model
   
   // window for the image
   
@@ -138,7 +194,5 @@ object GUI extends SimpleSwingApplication {
   // color values for data points
   
   // color values for the regression curve
-  
-
   
 }

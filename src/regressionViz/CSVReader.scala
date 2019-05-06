@@ -1,20 +1,40 @@
 package regressionViz
 
 import scala.collection.mutable.ArrayBuffer
+import java.io._
 
 class CSVReader(var1Name: String, var2Name: String) extends DataReader 
 {
   // example here: https://alvinalexander.com/scala/csv-file-how-to-process-open-read-parse-in-scala
+  // https://alvinalexander.com/scala/scala-exception-handling-try-catch-finally
   def readFile(filename: String): Option[Data] =
   {
     if(filename=="") return None
     // create array to be filled
     // needs to be as long as the file has columns
-    // TODO: does the file include variable names?
+
     var dataBuffer: ArrayBuffer[ArrayBuffer[Double]] = 
       ArrayBuffer[ArrayBuffer[Double]]()
-    
-    val bufferedFile = io.Source.fromFile(filename)  
+
+    // example: https://alvinalexander.com/scala/scala-exception-handling-try-catch-finally      
+    val bufferedFile = { 
+      try 
+      {
+        io.Source.fromFile(filename)  
+      }
+      catch
+      {
+        case e: FileNotFoundException => throw e
+        case e: Exception => 
+          {
+            val readExcept = new Exception(
+                "Problem reading the file " + filename)
+            throw readExcept
+          }
+            
+        
+      }
+    }
     var firstLine = true
     try
     {
@@ -41,6 +61,7 @@ class CSVReader(var1Name: String, var2Name: String) extends DataReader
     } 
     catch
     {
+      case e:FileNotFoundException => throw e
       case e:Exception =>
         {
           val csvReaderException = new Exception(
