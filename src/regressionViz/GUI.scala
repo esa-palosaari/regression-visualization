@@ -19,6 +19,18 @@ object GUI extends SimpleSwingApplication {
   {
     title = "Regression visualization"
     var modelType = ""
+    var sizex: Option[Int] = None
+    var sizey: Option[Int] = None
+    var xmax: Option[Int] = None
+    var xmin: Option[Int] = None
+    var ymax: Option[Int] = None
+    var ymin: Option[Int] = None
+    var pointColorR: Option[Int] = None
+    var pointColorB: Option[Int] = None
+    var pointColorG: Option[Int] = None
+    var curveColorR: Option[Int] = None
+    var curveColorB: Option[Int] = None
+    var curveColorG: Option[Int] = None    
     
     // error/success messages
     val messagePanel = new TextArea
@@ -98,10 +110,24 @@ object GUI extends SimpleSwingApplication {
       contents += modelFitButton
     }
     
+    // window for the image
+    class vizPanel extends Panel
+    {
+      override def paintComponent(g: Graphics2D) =
+      {
+        val n = engine.visuals.length
+        if (n > 0) g.drawImage(engine.visuals(n).canvas, 0, 0, null)
+      }
+      
+    }
+    
+    val viz = new vizPanel
+    
     contents = new BorderPanel
     {
       layout(gridPanel) = East
       layout(messagePanel) = South
+      layout(viz) = Center
     }
     
     val dim = new Dimension(800, 800)
@@ -163,9 +189,26 @@ object GUI extends SimpleSwingApplication {
       case ButtonClicked(component) if component == modelFitButton =>
         try
         {
+          
           engine.fitModel(modelType, engine.data(0))
           messagePanel.text_=("" + modelType + " fitted sucessfully")
-          messagePanel.background = Color.green          
+          messagePanel.background = Color.green      
+          engine.drawImage(engine.models(0),
+                          sizex,
+                          sizey,
+                          xmax,
+                          xmin,
+                          ymax,
+                          ymin,
+                          pointColorR,
+                          pointColorB,
+                          pointColorG,
+                          curveColorR,
+                          curveColorB,
+                          curveColorG
+                        )
+           messagePanel.text_=("Model drawn successfully")
+           viz.repaint()
         }
         catch
         {
@@ -183,7 +226,7 @@ object GUI extends SimpleSwingApplication {
   
   // button for writing an image
   
-  // window for the image
+  
   
   // image size
   
